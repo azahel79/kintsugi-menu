@@ -154,15 +154,19 @@ export function PrecioSello({ children, className = '' }: { children: ReactNode;
   );
 }
 
-/** Texto vertical japonés que se escribe carácter por carácter. */
+/**
+ * Texto vertical japonés que se escribe carácter por carácter.
+ * Se apilan los caracteres en columna (sin `writing-mode`): Safari de iPhone calcula
+ * mal el alto de cada letra en modo vertical y las encimaba.
+ */
 export function TextoVertical({ texto, className = '' }: { texto: string; className?: string }) {
   const chars = Array.from(texto);
   return (
-    <span aria-hidden="true" className={`jp-vertical ${className}`}>
+    <span aria-hidden="true" className={`inline-flex flex-col items-center font-jp leading-[1.12] gap-[0.06em] ${className}`}>
       {chars.map((c, i) => (
         <m.span
           key={i}
-          className="inline-block"
+          className="block"
           initial={{ opacity: 0, y: -6, filter: 'blur(3px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, amount: 0.5 }}

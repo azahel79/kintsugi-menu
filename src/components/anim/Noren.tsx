@@ -34,12 +34,12 @@ export function Noren() {
           onAnimationEnd={lado === 1 ? () => setAbiertaPara(seccion) : undefined}
           className={`relative h-full w-1/2 bg-noren border-x border-black/20 origin-top will-change-transform ${lado === -1 ? 'animate-noren-izq' : 'animate-noren-der'}`}
         >
-          {/* El kanji se parte a la mitad entre las dos telas */}
+          {/* El nombre del negocio en japonés (金継ぎ), en columna y partido entre las dos telas */}
           <span
-            className={`absolute top-[36vh] font-brush text-[72px] leading-none text-washi/95 ${lado === -1 ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'}`}
+            className={`absolute top-1/2 -translate-y-1/2 flex flex-col items-center font-brush text-[64px] leading-[1.05] text-washi/95 ${lado === -1 ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'}`}
             style={{ clipPath: lado === -1 ? 'inset(0 50% 0 0)' : 'inset(0 0 0 50%)' }}
           >
-            金
+            {['金', '継', 'ぎ'].map((c) => <span key={c}>{c}</span>)}
           </span>
           <span className="absolute bottom-0 inset-x-0 h-3 bg-black/25" />
         </div>

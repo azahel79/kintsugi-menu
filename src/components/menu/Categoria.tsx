@@ -123,7 +123,7 @@ function Vertical({ cat }: { cat: Categoria }) {
   return (
     <div className={`flex flex-col items-center justify-center shrink-0 ${lado} border-ink-black/20`}>
       <FlotarVertical>
-        <TextoVertical texto={cat.vertical} className={`${size} text-ink-black font-bold tracking-widest`} />
+        <TextoVertical texto={cat.vertical} className={`${size} text-ink-black font-bold`} />
       </FlotarVertical>
     </div>
   );

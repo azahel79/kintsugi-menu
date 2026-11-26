@@ -57,7 +57,7 @@ async function Platillo({ params }: Pick<PageProps<'/platillo/[id]'>, 'params'>)
             <span className="font-display text-headline-lg text-primary uppercase">KINTSUGI</span>
           </div>
           <span className="bg-washi/80 rounded-sm px-1 py-2">
-            <TextoVertical texto="いらっしゃい" className="font-brush text-ink-black text-headline-md tracking-widest" />
+            <TextoVertical texto="いらっしゃい" className="font-brush text-ink-black text-headline-md" />
           </span>
         </header>
       </div>
@@ -97,8 +97,8 @@ async function Platillo({ params }: Pick<PageProps<'/platillo/[id]'>, 'params'>)
           <div className="flex items-start justify-between gap-gutter-md">
             <div className="flex items-start gap-gutter-md min-w-0">
               {p.jp && (
-                <span className="jp-vertical px-1 py-1 rounded-sm bg-primary text-on-primary text-body-sm tracking-widest font-bold shrink-0" aria-hidden="true">
-                  {p.jp}
+                <span className="flex flex-col items-center px-1 py-1 rounded-sm bg-primary text-on-primary text-body-sm font-jp font-bold leading-[1.15] shrink-0" aria-hidden="true">
+                  {Array.from(p.jp).map((c, i) => <span key={i}>{c}</span>)}
                 </span>
               )}
               <div className="flex flex-col gap-gutter-xs min-w-0">
