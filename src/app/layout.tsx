@@ -22,9 +22,33 @@ const jakarta = localFont({ src: "../fonts/jakarta-400-700.woff2", variable: "--
 const JP_FONTS_URL =
   "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Yuji+Syuku&display=swap";
 
+// Dominio público: lo usa WhatsApp/Facebook para encontrar la imagen de vista previa.
+// En Vercel se toma solo el dominio de producción; NEXT_PUBLIC_SITE_URL permite fijar uno propio.
+const SITIO =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://kintsugi-menu-nu.vercel.app");
+
+const DESCRIPCION = "Ramen artesanal, sushi armado a tu gusto, entradas, bebidas y postres. Mira nuestro menú digital 🍜";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITIO),
   title: { default: "Kintsugi Banderilla · Cocina Japonesa", template: "%s · Kintsugi Banderilla" },
-  description: "Menú digital de Kintsugi: ramen artesanal, sushi armado a tu gusto, entradas, bebidas y postres en Banderilla, Veracruz.",
+  description: DESCRIPCION,
+  applicationName: "Kintsugi Banderilla",
+  // La imagen sale de src/app/opengraph-image.jpg (convención de archivos de Next).
+  openGraph: {
+    type: "website",
+    locale: "es_MX",
+    siteName: "Kintsugi Banderilla",
+    title: "Kintsugi Banderilla · Cocina Japonesa",
+    description: DESCRIPCION,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kintsugi Banderilla · Cocina Japonesa",
+    description: DESCRIPCION,
+  },
 };
 
 export const viewport: Viewport = {
