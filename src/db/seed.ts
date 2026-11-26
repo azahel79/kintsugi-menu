@@ -19,7 +19,7 @@ const ramenDesc = (extra: string) =>
 
 const secciones = [
   { id: 'ramen-sushi', nombre: 'Ramen y Sushi', jp: '麺・寿司', fondo: '/img/fondo-ramen-sushi-bambu.jpg', orden: 0 },
-  { id: 'entradas', nombre: 'Entradas', jp: '一品・串', fondo: '/img/fondo-entradas-enso.jpg', orden: 1 },
+  { id: 'entradas', nombre: 'Para compartir', jp: '取り分け', fondo: '/img/fondo-entradas-enso.jpg', orden: 1 },
   { id: 'bebidas', nombre: 'Bebidas', jp: '飲・甘味', fondo: '/img/fondo-bebidas-dragon.jpg', orden: 2 },
 ];
 
