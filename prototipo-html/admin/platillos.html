@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF8F4">
+  <meta name="robots" content="noindex">
+  <title>Kintsugi Banderilla — Platillos y precios</title>
+  <script>window.KROOT = '../';</script>
+  <script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
+  <script src="../assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Caveat:wght@700&family=Noto+Sans+JP:wght@400;700&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/kintsugi.css">
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script>KUI.guard();</script>
+</head>
+<body class="bg-light-surface text-ink-black font-body antialiased">
+  <div id="app" class="relative min-h-app max-w-md mx-auto bg-light-surface flex flex-col overflow-x-hidden"></div>
+
+  <script>
+    (function () {
+      var S = KStore, U = KUI, esc = U.esc, D = S.data;
+      var filtro = U.param('cat') || 'all';
+      var busqueda = '';
+
+      var catOrder = D.categorias.map(function (c) { return c.id; });
+      function ordenados() {
+        return D.productos.slice().sort(function (a, b) {
+          return (catOrder.indexOf(a.cat) - catOrder.indexOf(b.cat)) || ((a.orden || 0) - (b.orden || 0));
+        });
+      }
+
+      function chip(id, label) {
+        return '<button type="button" data-filter="' + esc(id) + '" class="filter-chip shrink-0 px-gutter-md py-gutter-xs rounded-full font-label text-label-sm border">' + esc(label) + '</button>';
+      }
+
+      document.getElementById('app').innerHTML =
+        U.adminBg() +
+        U.adminHeader('Platillos y precios',
+          '<a href="editar.html" class="inline-flex items-center gap-1 px-gutter-md py-gutter-xs rounded-full bg-primary text-on-primary border border-kintsugi-gold font-label text-label-sm shrink-0">' +
+          '<span class="material-symbols-outlined text-body-md" aria-hidden="true">add</span><span>Nuevo</span></a>') +
+
+        '<div class="relative z-10 bg-light-surface-container/90 px-page-margin py-gutter-md border-b border-kintsugi-gold/50 flex flex-col gap-gutter-sm">' +
+          '<form role="search" onsubmit="return false;" class="flex items-center gap-gutter-sm px-gutter-md py-gutter-xs rounded-full bg-washi border border-kintsugi-gold/70 focus-within:border-primary">' +
+            '<span class="material-symbols-outlined text-primary text-title-md" aria-hidden="true">search</span>' +
+            '<input id="admin-search" type="search" aria-label="Buscar platillo" placeholder="Buscar platillo..." class="w-full bg-transparent border-none text-ink-black placeholder:text-smoke-gray/70 font-body text-body-md focus:ring-0 p-1">' +
+          '</form>' +
+          '<div class="flex items-center gap-gutter-xs overflow-x-auto no-scrollbar">' +
+            chip('all', 'Todo') + D.categorias.map(function (c) { return chip(c.id, c.nombre); }).join('') +
+          '</div>' +
+        '</div>' +
+
+        '<main id="lista" class="relative z-10 flex-1 px-page-margin py-gutter-lg flex flex-col gap-gutter-sm"></main>' +
+        U.adminNav('platillos');
+
+      function render() {
+        var q = busqueda.trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+        var items = ordenados().filter(function (p) {
+          if (filtro !== 'all' && p.cat !== filtro) return false;
+          if (!q) return true;
+          return (p.nombre + ' ' + p.sub + ' ' + p.jp).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').indexOf(q) !== -1;
+        });
+
+        document.querySelectorAll('.filter-chip').forEach(function (b) {
+          var on = b.getAttribute('data-filter') === filtro;
+          b.className = 'filter-chip shrink-0 px-gutter-md py-gutter-xs rounded-full font-label text-label-sm border ' +
+            (on ? 'bg-primary text-on-primary border-primary' : 'bg-washi text-ink-black border-kintsugi-gold/60');
+        });
+
+        var html = items.map(function (p) {
+          var cat = S.categoria(p.cat) || {};
+          return '<div class="rounded-md ' + (p.disponible ? 'bg-light-surface-container-low border-kintsugi-gold/80' : 'bg-light-surface-container border-kintsugi-gold/50') + ' border p-gutter-md flex items-center justify-between gap-gutter-sm">' +
+            '<div class="flex items-center gap-gutter-md min-w-0">' + U.thumb(p, 'w-12 h-12 text-title-md', 'rounded-sm') +
+              '<div class="flex flex-col min-w-0">' +
+                '<span class="font-headline text-title-md text-ink-black uppercase truncate">' + esc(p.nombre) + '</span>' +
+                '<div class="flex items-center gap-gutter-sm flex-wrap">' +
+                  '<span class="font-price text-price-md ' + (p.etiquetas.indexOf('Especialidad') !== -1 ? 'text-primary' : 'text-ink-black') + ' tabular-nums">' + U.money(p.precio) + '</span>' +
+                  '<button type="button" data-toggle="' + esc(p.id) + '" aria-label="Cambiar disponibilidad de ' + esc(p.nombre) + '" class="font-body text-body-sm font-semibold underline decoration-dotted underline-offset-2 ' + (p.disponible ? 'text-success' : 'text-error') + '">' + (p.disponible ? 'Disponible' : 'Agotado') + '</button>' +
+                  (filtro === 'all' ? '<span class="font-body text-body-sm text-smoke-gray">· ' + esc(cat.nombre || '') + '</span>' : '') +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<a href="editar.html?id=' + encodeURIComponent(p.id) + '" class="px-gutter-md py-gutter-xs rounded-full bg-washi border border-kintsugi-gold font-label text-label-sm text-ink-black shrink-0">Editar</a>' +
+          '</div>';
+        }).join('');
+
+        document.getElementById('lista').innerHTML = html ||
+          '<div class="rounded-md bg-light-surface-container-low border border-kintsugi-gold/70 p-gutter-xl text-center flex flex-col items-center gap-gutter-sm">' +
+            '<span class="material-symbols-outlined text-display-lg text-kintsugi-gold" aria-hidden="true">search_off</span>' +
+            '<p class="font-body text-body-md text-smoke-gray">No hay platillos que coincidan.</p>' +
+            '<a href="editar.html' + (filtro !== 'all' ? '?cat=' + encodeURIComponent(filtro) : '') + '" class="px-gutter-md py-gutter-xs rounded-full bg-primary text-on-primary font-label text-label-sm">+ Agregar platillo</a></div>';
+      }
+
+      document.getElementById('admin-search').addEventListener('input', function () { busqueda = this.value; render(); });
+      document.querySelectorAll('.filter-chip').forEach(function (b) {
+        b.addEventListener('click', function () { filtro = b.getAttribute('data-filter'); render(); });
+      });
+      document.getElementById('lista').addEventListener('click', function (e) {
+        var t = e.target.closest('[data-toggle]');
+        if (!t) return;
+        var p = S.producto(t.getAttribute('data-toggle'));
+        p.disponible = !p.disponible;
+        if (S.save()) U.toast(p.nombre + (p.disponible ? ' disponible' : ' marcado como agotado'));
+        render();
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

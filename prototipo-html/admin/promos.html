@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF8F4">
+  <meta name="robots" content="noindex">
+  <title>Kintsugi Banderilla — Promociones</title>
+  <script>window.KROOT = '../';</script>
+  <script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
+  <script src="../assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Caveat:wght@700&family=Noto+Sans+JP:wght@400;700&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/kintsugi.css">
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script>KUI.guard();</script>
+</head>
+<body class="bg-light-surface text-ink-black font-body antialiased">
+  <div id="app" class="relative min-h-app max-w-md mx-auto bg-light-surface flex flex-col overflow-x-hidden"></div>
+
+  <!-- Hoja para crear / editar una promoción -->
+  <dialog id="sheet" class="sheet" aria-labelledby="sheet-title">
+    <form id="promo-form" method="dialog" class="rounded-t-xl sm:rounded-xl bg-light-surface-container-low border-t-2 sm:border-2 border-kintsugi-gold max-h-[90dvh] overflow-y-auto flex flex-col gap-gutter-md p-gutter-lg"></form>
+  </dialog>
+
+  <script>
+    (function () {
+      var S = KStore, U = KUI, esc = U.esc, D = S.data;
+      var input = 'rounded-md bg-washi border border-kintsugi-gold/70 px-gutter-md py-gutter-sm font-body text-body-md text-ink-black focus:border-primary focus:ring-0';
+      var label = 'font-label text-label-sm text-ink-black';
+
+      document.getElementById('app').innerHTML =
+        U.adminBg() +
+        U.adminHeader('Promociones',
+          '<button type="button" id="nueva" class="inline-flex items-center gap-1 px-gutter-md py-gutter-xs rounded-full bg-primary text-on-primary border border-kintsugi-gold font-label text-label-sm shrink-0">' +
+          '<span class="material-symbols-outlined text-body-md" aria-hidden="true">add</span><span>Nueva promo</span></button>') +
+        '<main id="lista" class="relative z-10 flex-1 px-page-margin py-gutter-lg flex flex-col gap-gutter-lg"></main>' +
+        U.adminNav('promos');
+
+      function card(pr) {
+        var on = pr.activa;
+        var img = pr.img
+          ? '<img src="' + esc(U.src(pr.img)) + '" alt="' + esc(pr.titulo) + '" class="w-16 h-16 rounded-md object-cover border ' + (on ? 'border-kintsugi-gold' : 'border-kintsugi-gold/60') + ' shrink-0">'
+          : '<span class="w-16 h-16 rounded-md bg-washi border border-kintsugi-gold/60 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-headline-lg text-kintsugi-gold" aria-hidden="true">local_offer</span></span>';
+        return '<section class="rounded-xl ' + (on ? 'bg-light-surface-container-low border-2 border-kintsugi-gold' : 'bg-light-surface-container border border-kintsugi-gold/50') + ' p-gutter-lg flex flex-col gap-gutter-md">' +
+          '<div class="flex items-start justify-between gap-gutter-md"><div class="flex flex-col gap-gutter-xs min-w-0">' +
+            '<span class="inline-flex self-start items-center px-gutter-sm py-0.5 rounded-sm ' + (on ? 'bg-success text-on-success' : 'bg-smoke-gray text-washi') + ' font-label text-label-sm">' + (on ? 'Activa en menú' : 'Pausada') + '</span>' +
+            '<h2 class="font-headline text-headline-md text-ink-black uppercase">' + esc(pr.titulo) + '</h2>' +
+            '<p class="font-body text-body-sm text-smoke-gray">' + esc(pr.subtitulo) + '</p></div>' + img + '</div>' +
+          (on && pr.texto ? '<p class="font-body text-body-sm text-ink-black">' + esc(pr.texto) + '</p>' : '') +
+          '<div class="flex items-center justify-between gap-gutter-sm pt-gutter-sm border-t ' + (on ? 'border-kintsugi-gold/50' : 'border-kintsugi-gold/40') + '">' +
+            (on
+              ? '<label class="inline-flex items-center gap-gutter-xs font-label text-label-sm text-ink-black"><input type="checkbox" data-portada="' + esc(pr.id) + '"' + (pr.portada ? ' checked' : '') + ' class="w-4 h-4 rounded-sm text-primary border-kintsugi-gold focus:ring-primary"><span>Mostrar en portada</span></label>'
+              : '<label class="inline-flex items-center gap-gutter-xs font-label text-label-sm text-ink-black"><input type="checkbox" data-activar="' + esc(pr.id) + '" class="w-4 h-4 rounded-sm text-primary border-kintsugi-gold focus:ring-primary"><span>Activar ahora</span></label>') +
+            '<button type="button" data-editar="' + esc(pr.id) + '" class="px-gutter-md py-gutter-xs rounded-full bg-light-surface-container-low border border-kintsugi-gold font-label text-label-sm text-ink-black">Editar texto</button>' +
+          '</div></section>';
+      }
+
+      function render() {
+        var list = D.promos.slice().sort(function (a, b) { return (b.activa ? 1 : 0) - (a.activa ? 1 : 0); });
+        document.getElementById('lista').innerHTML = list.length ? list.map(card).join('')
+          : '<div class="rounded-xl bg-light-surface-container-low border border-kintsugi-gold/70 p-gutter-xl text-center flex flex-col items-center gap-gutter-sm">' +
+              '<span class="material-symbols-outlined text-display-lg text-kintsugi-gold" aria-hidden="true">local_offer</span>' +
+              '<p class="font-body text-body-md text-smoke-gray">Aún no tienes promociones. Crea la primera con “Nueva promo”.</p></div>';
+      }
+
+      document.getElementById('lista').addEventListener('change', function (e) {
+        var t = e.target, pr;
+        if (t.hasAttribute('data-portada')) {
+          pr = D.promos.filter(function (x) { return x.id === t.getAttribute('data-portada'); })[0];
+          pr.portada = t.checked;
+          if (S.save()) U.toast(t.checked ? 'Se muestra en la portada del menú' : 'Ya no aparece en la portada');
+        } else if (t.hasAttribute('data-activar')) {
+          pr = D.promos.filter(function (x) { return x.id === t.getAttribute('data-activar'); })[0];
+          pr.activa = true;
+          if (S.save()) U.toast('Promoción activada');
+          render();
+        }
+      });
+      document.getElementById('lista').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-editar]');
+        if (b) abrir(D.promos.filter(function (x) { return x.id === b.getAttribute('data-editar'); })[0]);
+      });
+      document.getElementById('nueva').addEventListener('click', function () { abrir(null); });
+
+      /* ---------- Hoja de edición ---------- */
+      var sheet = document.getElementById('sheet');
+      var form = document.getElementById('promo-form');
+      var actual, img;
+
+      function abrir(pr) {
+        actual = pr;
+        var v = pr || { titulo: '', subtitulo: '', texto: '', etiqueta: '', img: '', activa: true, portada: true, productos: [] };
+        img = v.img;
+        form.innerHTML =
+          '<div class="flex items-center justify-between"><h2 id="sheet-title" class="font-headline text-headline-md text-ink-black">' + (pr ? 'Editar promoción' : 'Nueva promoción') + '</h2>' +
+            '<button type="button" data-cerrar aria-label="Cerrar" class="w-9 h-9 rounded-full bg-washi border border-kintsugi-gold flex items-center justify-center"><span class="material-symbols-outlined" aria-hidden="true">close</span></button></div>' +
+          '<div class="flex items-center gap-gutter-md"><div id="promo-img"></div>' +
+            '<button type="button" id="promo-foto" class="inline-flex items-center gap-1 px-gutter-md py-gutter-xs rounded-full bg-secondary text-on-secondary font-label text-label-sm"><span class="material-symbols-outlined text-body-md" aria-hidden="true">image</span>Cambiar imagen</button></div>' +
+          '<div class="flex flex-col gap-gutter-xs"><label for="pr-titulo" class="' + label + '">Título</label><input id="pr-titulo" required value="' + esc(v.titulo) + '" placeholder="2X$150 EN SUSHI" class="' + input + ' uppercase"></div>' +
+          '<div class="flex flex-col gap-gutter-xs"><label for="pr-sub" class="' + label + '">Cuándo y dónde aplica</label><input id="pr-sub" value="' + esc(v.subtitulo) + '" placeholder="Aplica en Futomaki y Uramaki · Todo octubre" class="' + input + '"></div>' +
+          '<div class="flex flex-col gap-gutter-xs"><label for="pr-texto" class="' + label + '">Texto de la promoción</label><textarea id="pr-texto" rows="2" class="' + input + '">' + esc(v.texto) + '</textarea></div>' +
+          '<div class="flex flex-col gap-gutter-xs"><label for="pr-etq" class="' + label + '">Etiqueta en los platillos</label><input id="pr-etq" value="' + esc(v.etiqueta) + '" placeholder="PROMO 2x$150" class="' + input + '"></div>' +
+          '<fieldset class="flex flex-col gap-gutter-xs"><legend class="' + label + ' mb-gutter-xs">Platillos a los que aplica</legend>' +
+            '<div class="grid grid-cols-2 gap-gutter-xs max-h-48 overflow-y-auto pr-1">' +
+            D.productos.map(function (p) {
+              return '<label class="flex items-center gap-gutter-xs p-gutter-xs rounded-md bg-washi border border-kintsugi-gold/50 font-body text-body-sm">' +
+                '<input type="checkbox" class="pr-prod w-4 h-4 rounded-sm text-primary border-kintsugi-gold focus:ring-primary" value="' + esc(p.id) + '"' + (v.productos.indexOf(p.id) !== -1 ? ' checked' : '') + '>' +
+                '<span class="truncate">' + esc(p.nombre) + '</span></label>';
+            }).join('') + '</div></fieldset>' +
+          '<div class="flex flex-wrap gap-gutter-md">' +
+            '<label class="inline-flex items-center gap-gutter-xs font-label text-label-sm"><input id="pr-activa" type="checkbox"' + (v.activa ? ' checked' : '') + ' class="w-4 h-4 rounded-sm text-primary border-kintsugi-gold focus:ring-primary">Activa</label>' +
+            '<label class="inline-flex items-center gap-gutter-xs font-label text-label-sm"><input id="pr-portada" type="checkbox"' + (v.portada ? ' checked' : '') + ' class="w-4 h-4 rounded-sm text-primary border-kintsugi-gold focus:ring-primary">Mostrar en portada</label>' +
+          '</div>' +
+          '<p id="pr-error" class="hidden font-body text-body-sm text-error" role="alert">Escribe el título de la promoción.</p>' +
+          '<button type="submit" value="guardar" class="inline-flex items-center justify-center gap-gutter-sm w-full py-gutter-md rounded-full bg-primary text-on-primary border border-kintsugi-gold font-label text-label-lg"><span class="material-symbols-outlined text-title-md" aria-hidden="true">save</span>Guardar promoción</button>' +
+          (pr ? '<button type="button" id="pr-borrar" class="inline-flex items-center justify-center gap-1 py-gutter-sm rounded-full border border-error/40 text-error font-label text-label-sm"><span class="material-symbols-outlined text-body-md" aria-hidden="true">delete</span>Eliminar promoción</button>' : '');
+
+        pintarImg();
+        form.querySelector('[data-cerrar]').addEventListener('click', function () { sheet.close(); });
+        document.getElementById('promo-foto').addEventListener('click', function () {
+          U.pickImage(800).then(function (d) { img = d; pintarImg(); });
+        });
+        var borrar = document.getElementById('pr-borrar');
+        if (borrar) borrar.addEventListener('click', function () {
+          if (!confirm('¿Eliminar la promoción "' + actual.titulo + '"?')) return;
+          D.promos = D.promos.filter(function (x) { return x.id !== actual.id; });
+          if (S.save()) { sheet.close(); render(); U.toast('Promoción eliminada'); }
+        });
+        sheet.showModal();
+        document.getElementById('pr-titulo').focus();
+      }
+
+      function pintarImg() {
+        document.getElementById('promo-img').innerHTML = img
+          ? '<img src="' + esc(U.src(img)) + '" alt="" class="w-16 h-16 rounded-md object-cover border border-kintsugi-gold">'
+          : '<span class="w-16 h-16 rounded-md bg-washi border border-kintsugi-gold/60 flex items-center justify-center"><span class="material-symbols-outlined text-headline-lg text-kintsugi-gold" aria-hidden="true">image</span></span>';
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var titulo = document.getElementById('pr-titulo').value.trim();
+        if (!titulo) { document.getElementById('pr-error').classList.remove('hidden'); return; }
+        var v = {
+          titulo: titulo.toUpperCase(),
+          subtitulo: document.getElementById('pr-sub').value.trim(),
+          texto: document.getElementById('pr-texto').value.trim(),
+          etiqueta: document.getElementById('pr-etq').value.trim(),
+          img: img || '',
+          activa: document.getElementById('pr-activa').checked,
+          portada: document.getElementById('pr-portada').checked,
+          productos: Array.prototype.map.call(form.querySelectorAll('.pr-prod:checked'), function (c) { return c.value; })
+        };
+        if (actual) Object.assign(actual, v);
+        else { v.id = S.uid('promo-' + titulo, D.promos); D.promos.push(v); }
+        if (S.save()) { sheet.close(); render(); U.toast('Promoción guardada'); }
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

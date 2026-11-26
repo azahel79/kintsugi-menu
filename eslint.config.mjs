@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Prototipo HTML original (solo referencia de diseño).
+    "prototipo-html/**",
   ]),
 ]);
 

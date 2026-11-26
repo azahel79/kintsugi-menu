@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" fill="none">
+  <!-- Rama de cerezo en trazo sumi-e -->
+  <g stroke="#2a2420" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M320 18 C 270 30, 236 46, 196 70 S 120 120, 64 132" stroke-width="7"/>
+    <path d="M232 52 C 222 76, 214 96, 206 124" stroke-width="4"/>
+    <path d="M168 88 C 150 70, 140 56, 118 44" stroke-width="3.5"/>
+    <path d="M110 120 C 96 140, 88 158, 70 176" stroke-width="3"/>
+    <path d="M270 32 C 262 14, 252 6, 236 2" stroke-width="3"/>
+  </g>
+  <!-- Flores -->
+  <g>
+    <g transform="translate(206 128)"><circle r="11" fill="#C8372D" opacity=".85"/><circle r="4" fill="#F2EEE6"/></g>
+    <g transform="translate(118 44)"><circle r="10" fill="#d9605a" opacity=".85"/><circle r="3.5" fill="#F2EEE6"/></g>
+    <g transform="translate(70 178)"><circle r="9" fill="#C8372D" opacity=".8"/><circle r="3" fill="#F2EEE6"/></g>
+    <g transform="translate(150 98)"><circle r="7" fill="#e58b85" opacity=".9"/></g>
+    <g transform="translate(236 4)"><circle r="8" fill="#d9605a" opacity=".85"/><circle r="3" fill="#F2EEE6"/></g>
+    <g transform="translate(64 132)"><circle r="12" fill="#C8372D" opacity=".9"/><circle r="4.5" fill="#F2EEE6"/></g>
+    <g transform="translate(184 74)"><circle r="6" fill="#e58b85" opacity=".85"/></g>
+    <g transform="translate(96 150)"><circle r="6" fill="#e58b85" opacity=".85"/></g>
+    <g transform="translate(262 36)"><circle r="7" fill="#C8372D" opacity=".75"/></g>
+  </g>
+  <!-- Pétalos sueltos -->
+  <g fill="#C8372D" opacity=".55">
+    <ellipse cx="150" cy="190" rx="4" ry="2.2" transform="rotate(-25 150 190)"/>
+    <ellipse cx="40" cy="212" rx="3.5" ry="2" transform="rotate(30 40 212)"/>
+    <ellipse cx="190" cy="168" rx="3" ry="1.8" transform="rotate(10 190 168)"/>
+  </g>
+</svg>

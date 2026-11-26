@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F2EEE6">
+  <title>Kintsugi Banderilla — Platillo</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Caveat:wght@700&family=Noto+Sans+JP:wght@400;700&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/kintsugi.css">
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/ui.js"></script>
+</head>
+<body class="bg-light-surface text-ink-black font-body antialiased">
+  <div id="app" class="relative min-h-app max-w-md mx-auto bg-light-surface flex flex-col justify-end overflow-hidden"></div>
+
+  <script>
+    (function () {
+      var S = KStore, U = KUI, esc = U.esc;
+      var p = S.producto(U.param('id'));
+      if (!p) { location.replace('menu.html'); return; }
+
+      var cat = S.categoria(p.cat) || { nombre: '', seccion: 'ramen-sushi', kanji: '品' };
+      var sid = cat.seccion;
+      var esEspecial = p.etiquetas.indexOf('Especialidad') !== -1;
+      var volver = 'menu.html?s=' + encodeURIComponent(sid);
+      var opcion = p.opciones && p.opciones.valores.length ? p.opciones.valores[0] : '';
+      document.title = 'Kintsugi Banderilla — ' + p.nombre;
+
+      function tagClass(t) {
+        if (t === 'Especialidad') return 'bg-primary text-on-primary';
+        if (t === 'Nuevo') return 'bg-tertiary text-on-tertiary';
+        return 'bg-washi text-ink-black border border-ink-black/30';
+      }
+
+      var foto = p.img
+        ? '<img src="' + esc(U.src(p.img)) + '" alt="' + esc(p.nombre) + '" class="w-full h-56 object-cover">'
+        : '<div class="w-full h-56 bg-tinta flex items-center justify-center"><span class="w-24 h-24 rounded-full bg-washi/90 border-2 border-kintsugi-gold flex items-center justify-center text-primary text-display-lg font-bold" style="font-family:\'Noto Sans JP\',sans-serif" aria-hidden="true">' + esc(cat.kanji || '品') + '</span></div>';
+
+      var conImagen = !!S.data.fondos[sid];
+
+      document.getElementById('app').innerHTML =
+        // Fondo artesanal visible detrás de la hoja inferior
+        '<div class="absolute inset-0 pointer-events-none">' +
+          U.fondo(sid, 'w-full h-full') +
+          (conImagen ? '<img src="assets/img/sakura.svg" alt="" class="absolute top-0 right-0 w-56 opacity-90">' : '') +
+          '<header class="absolute top-0 inset-x-0 z-10 px-page-margin pt-gutter-xl pb-gutter-md flex items-center justify-between">' +
+            '<div class="px-gutter-md py-gutter-xs rounded-sm bg-washi/95 border border-kintsugi-gold"><span class="font-display text-headline-lg text-primary uppercase">KINTSUGI</span></div>' +
+            '<span class="jp-vertical text-ink-black text-body-md tracking-widest font-bold bg-washi/70 rounded-sm py-1" aria-hidden="true">いらっしゃい</span>' +
+          '</header>' +
+        '</div>' +
+
+        // Hoja inferior en papel washi translúcido con detalles dorados kintsugi
+        '<main class="relative z-20 mt-40 bg-washi/90 backdrop-blur-sm rounded-t-xl border-t-2 border-kintsugi-gold flex flex-col">' +
+          '<div class="flex items-center justify-between px-page-margin pt-gutter-md pb-gutter-sm">' +
+            '<span class="font-body text-body-sm text-smoke-gray tracking-widest uppercase font-semibold">' + esc(cat.nombre) + (esEspecial ? ' · Especialidad' : '') + '</span>' +
+            '<span class="w-10 h-1 rounded-full bg-kintsugi-gold" aria-hidden="true"></span>' +
+            '<a href="' + esc(volver) + '" aria-label="Cerrar detalle" class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-washi text-ink-black border border-kintsugi-gold hover:border-primary">' +
+              '<span class="material-symbols-outlined text-title-md" aria-hidden="true">close</span></a>' +
+          '</div>' +
+
+          '<div class="px-page-margin"><div class="relative rounded-lg overflow-hidden border-2 border-kintsugi-gold">' + foto +
+            (esEspecial ? '<div class="absolute bottom-gutter-md right-gutter-md w-10 h-10 rounded-sm bg-primary border border-kintsugi-gold flex items-center justify-center"><span class="font-body text-body-sm text-on-primary font-bold" aria-hidden="true">特選</span></div>' : '') +
+          '</div></div>' +
+
+          '<div class="px-page-margin py-gutter-xl flex flex-col gap-gutter-lg">' +
+            '<div class="flex items-start justify-between gap-gutter-md">' +
+              '<div class="flex items-start gap-gutter-md min-w-0">' +
+                (p.jp ? '<span class="jp-vertical px-1 py-1 rounded-sm bg-primary text-on-primary text-body-sm tracking-widest font-bold shrink-0" aria-hidden="true">' + esc(p.jp) + '</span>' : '') +
+                '<div class="flex flex-col gap-gutter-xs min-w-0">' +
+                  '<h1 class="font-headline text-headline-lg text-ink-black uppercase tracking-wider">' + esc(p.nombre) + '</h1>' +
+                  '<div class="flex flex-wrap items-center gap-gutter-xs">' +
+                    (p.disponible ? '' : '<span class="px-gutter-sm py-0.5 rounded-sm bg-smoke-gray text-washi font-label text-label-sm">Agotado hoy</span>') +
+                    p.etiquetas.map(function (t) { return '<span class="px-gutter-sm py-0.5 rounded-sm font-label text-label-sm ' + tagClass(t) + '">' + esc(t) + '</span>'; }).join('') +
+                  '</div>' +
+                '</div>' +
+              '</div>' +
+              '<span class="font-price text-display-lg-mobile text-primary tabular-nums shrink-0">' + U.money(p.precio) + '</span>' +
+            '</div>' +
+
+            '<p class="font-body text-body-md text-smoke-gray text-pretty leading-relaxed">' + esc(p.desc || p.sub || cat.nota || '') + '</p>' +
+
+            '<div class="h-px w-full bg-gradient-to-r from-transparent via-kintsugi-gold to-transparent" aria-hidden="true"></div>' +
+
+            (p.opciones && p.opciones.valores.length
+              ? '<div class="flex flex-col gap-gutter-sm"><span class="font-label text-label-lg text-ink-black">' + esc(p.opciones.titulo) + '</span>' +
+                  '<div id="chips" class="flex flex-wrap gap-gutter-sm" role="group" aria-label="' + esc(p.opciones.titulo) + '">' +
+                  p.opciones.valores.map(function (v, i) {
+                    return '<button type="button" data-v="' + esc(v) + '" aria-pressed="' + (i === 0) + '" class="opt-chip inline-flex items-center px-gutter-lg py-gutter-sm rounded-full font-label text-label-sm border transition-colors duration-state-change"></button>';
+                  }).join('') + '</div></div>'
+              : '') +
+
+            '<div class="pt-gutter-sm flex items-center gap-gutter-md">' +
+              (p.disponible
+                ? '<a id="wa" target="_blank" rel="noopener" class="flex-1 inline-flex items-center justify-center gap-gutter-sm py-gutter-md px-gutter-xl rounded-full bg-primary text-on-primary border border-kintsugi-gold hover:bg-primary/90">' +
+                    '<span class="material-symbols-outlined text-title-md" aria-hidden="true">chat</span><span class="font-label text-label-lg">Pedir por WhatsApp</span></a>'
+                : '<a href="' + esc(volver) + '" class="flex-1 inline-flex items-center justify-center gap-gutter-sm py-gutter-md px-gutter-xl rounded-full bg-washi text-ink-black border border-kintsugi-gold"><span class="font-label text-label-lg">Ver otros platillos</span></a>') +
+            '</div>' +
+          '</div>' +
+        '</main>';
+
+      var chips = document.querySelectorAll('.opt-chip');
+      var wa = document.getElementById('wa');
+
+      function paint() {
+        chips.forEach(function (c) {
+          var on = c.getAttribute('data-v') === opcion;
+          c.textContent = c.getAttribute('data-v');
+          c.setAttribute('aria-pressed', on ? 'true' : 'false');
+          c.classList.toggle('bg-secondary', on);
+          c.classList.toggle('text-on-secondary', on);
+          c.classList.toggle('border-kintsugi-gold', on);
+          c.classList.toggle('bg-washi', !on);
+          c.classList.toggle('text-ink-black', !on);
+          c.classList.toggle('border-kintsugi-gold/70', !on);
+        });
+        if (wa) {
+          var msg = '¡Hola Kintsugi! Quiero pedir: ' + p.nombre + (opcion ? ' (' + p.opciones.titulo + ': ' + opcion + ')' : '') + ' — ' + U.money(p.precio);
+          wa.href = U.waLink(msg);
+        }
+      }
+      chips.forEach(function (c) { c.addEventListener('click', function () { opcion = c.getAttribute('data-v'); paint(); }); });
+      paint();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF8F4">
+  <meta name="robots" content="noindex">
+  <title>Kintsugi Banderilla — Configurar Arma tu sushi</title>
+  <script>window.KROOT = '../';</script>
+  <script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
+  <script src="../assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Caveat:wght@700&family=Noto+Sans+JP:wght@400;700&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/kintsugi.css">
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script>KUI.guard();</script>
+</head>
+<body class="bg-light-surface text-ink-black font-body antialiased">
+  <div id="app" class="relative min-h-app max-w-md mx-auto bg-light-surface flex flex-col overflow-x-hidden"></div>
+
+  <dialog id="sheet" class="sheet" aria-labelledby="ing-title">
+    <form id="ing-form" class="rounded-t-xl sm:rounded-xl bg-light-surface-container-low border-t-2 sm:border-2 border-kintsugi-gold flex flex-col gap-gutter-md p-gutter-lg"></form>
+  </dialog>
+
+  <script>
+    (function () {
+      var S = KStore, U = KUI, esc = U.esc, D = S.data, cfg = D.sushi;
+      var catSushi = D.categorias.filter(function (c) { return c.armable; })[0];
+      var rollos = catSushi ? S.productosDe(catSushi.id) : [];
+      // Copia de trabajo: nada se guarda hasta "Guardar configuración".
+      var ings = JSON.parse(JSON.stringify(cfg.ingredientes));
+      var cambios = false;
+
+      var numInput = 'rounded-md bg-washi border border-kintsugi-gold/70 px-gutter-sm py-gutter-xs font-headline text-title-md text-ink-black tabular-nums focus:border-primary focus:ring-0';
+
+      document.getElementById('app').innerHTML =
+        U.adminBg() +
+        U.adminBackHeader('Arma tu sushi', 'panel.html', 'Volver al panel') +
+        '<main class="relative z-10 flex-1 px-page-margin py-gutter-lg flex flex-col gap-gutter-xl">' +
+          '<section class="flex flex-col gap-gutter-sm">' +
+            '<h2 class="font-headline text-title-md text-ink-black uppercase">Precios de rollos</h2>' +
+            '<div class="rounded-lg bg-light-surface-container-low border border-kintsugi-gold p-gutter-md flex flex-col gap-gutter-sm">' +
+              (rollos.length ? rollos.map(function (r) {
+                return '<div class="flex items-center justify-between gap-gutter-md">' +
+                  '<label for="r-' + esc(r.id) + '" class="font-headline text-title-md text-ink-black uppercase">' + esc(r.nombre) + '</label>' +
+                  '<input id="r-' + esc(r.id) + '" data-rollo="' + esc(r.id) + '" type="number" inputmode="decimal" min="0" value="' + esc(r.precio) + '" class="w-24 text-right ' + numInput + '"></div>';
+              }).join('') : '<p class="font-body text-body-sm text-smoke-gray">No hay rollos. Agrégalos en Platillos con la categoría Sushi.</p>') +
+              '<a href="platillos.html?cat=' + encodeURIComponent(catSushi ? catSushi.id : '') + '" class="self-start font-label text-label-sm text-secondary underline underline-offset-2">Agregar o editar rollos</a>' +
+            '</div>' +
+          '</section>' +
+
+          '<section class="flex flex-col gap-gutter-sm">' +
+            '<h2 class="font-headline text-title-md text-ink-black uppercase">Reglas y extras</h2>' +
+            '<div class="grid grid-cols-3 gap-gutter-sm">' +
+              '<div class="rounded-md bg-light-surface-container-low border border-kintsugi-gold/80 p-gutter-md flex flex-col gap-gutter-xs"><label for="incluidos" class="font-label text-label-sm text-smoke-gray">Incluidos</label>' +
+                '<input id="incluidos" type="number" min="1" max="6" value="' + esc(cfg.incluidos) + '" class="' + numInput + '"></div>' +
+              '<div class="rounded-md bg-light-surface-container-low border border-kintsugi-gold/80 p-gutter-md flex flex-col gap-gutter-xs"><label for="extra-veg" class="font-label text-label-sm text-smoke-gray">Verdura extra ($)</label>' +
+                '<input id="extra-veg" type="number" min="0" value="' + esc(cfg.extraVerdura) + '" class="' + numInput + '"></div>' +
+              '<div class="rounded-md bg-light-surface-container-low border border-kintsugi-gold/80 p-gutter-md flex flex-col gap-gutter-xs"><label for="extra-pro" class="font-label text-label-sm text-smoke-gray">Proteína extra ($)</label>' +
+                '<input id="extra-pro" type="number" min="0" value="' + esc(cfg.extraProteina) + '" class="' + numInput + '"></div>' +
+            '</div>' +
+          '</section>' +
+
+          '<section class="flex flex-col gap-gutter-sm">' +
+            '<div class="flex items-center justify-between"><h2 id="ing-count" class="font-headline text-title-md text-ink-black uppercase"></h2>' +
+              '<button type="button" id="agregar" class="px-gutter-md py-gutter-xs rounded-full bg-secondary text-on-secondary font-label text-label-sm">+ Agregar</button></div>' +
+            '<p class="font-body text-body-sm text-smoke-gray">Desmarca los que no haya hoy. Toca el nombre para editarlo.</p>' +
+            '<div id="ings" class="grid grid-cols-2 gap-gutter-xs"></div>' +
+          '</section>' +
+
+          '<button type="button" id="guardar" class="inline-flex items-center justify-center gap-gutter-sm w-full py-gutter-md px-gutter-xl rounded-full bg-primary text-on-primary border border-kintsugi-gold font-label text-label-lg">' +
+            '<span class="material-symbols-outlined text-title-md" aria-hidden="true">save</span><span>Guardar configuración</span></button>' +
+        '</main>';
+
+      function renderIngs() {
+        document.getElementById('ing-count').textContent = 'Ingredientes (' + ings.length + ')';
+        document.getElementById('ings').innerHTML = ings.map(function (i, idx) {
+          return '<div class="flex items-center justify-between gap-gutter-xs p-gutter-sm rounded-md bg-light-surface-container-low border border-kintsugi-gold/70' + (i.activo ? '' : ' opacity-60') + '">' +
+            '<button type="button" data-edit="' + idx + '" class="min-w-0 flex items-center gap-1 text-left">' +
+              '<span class="material-symbols-outlined text-body-md text-secondary" aria-hidden="true">' + esc(i.icono || 'restaurant') + '</span>' +
+              '<span class="font-body text-body-sm text-ink-black truncate">' + esc(i.nombre) + '</span>' +
+              '<span class="font-label text-[10px] px-1 rounded-sm ' + (i.tipo === 'verdura' ? 'bg-success/15 text-success' : 'bg-primary/10 text-primary') + '">' + (i.tipo === 'verdura' ? 'V' : 'P') + '</span>' +
+            '</button>' +
+            '<input type="checkbox" data-on="' + idx + '" aria-label="' + esc(i.nombre) + ' disponible"' + (i.activo ? ' checked' : '') + ' class="w-4 h-4 rounded-sm text-primary border-kintsugi-gold focus:ring-primary shrink-0">' +
+          '</div>';
+        }).join('');
+      }
+
+      var cont = document.getElementById('ings');
+      cont.addEventListener('change', function (e) {
+        var i = e.target.getAttribute('data-on');
+        if (i !== null) { ings[i].activo = e.target.checked; cambios = true; renderIngs(); }
+      });
+      cont.addEventListener('click', function (e) {
+        var b = e.target.closest('[data-edit]');
+        if (b) abrir(Number(b.getAttribute('data-edit')));
+      });
+      document.getElementById('agregar').addEventListener('click', function () { abrir(-1); });
+      document.querySelector('main').addEventListener('input', function () { cambios = true; });
+
+      /* ---------- Hoja: ingrediente ---------- */
+      var sheet = document.getElementById('sheet'), form = document.getElementById('ing-form'), editIdx;
+      var ICONOS = ['restaurant', 'set_meal', 'phishing', 'water', 'egg', 'egg_alt', 'skillet', 'bakery_dining', 'eco', 'spa', 'nutrition', 'sunny', 'local_florist', 'grass'];
+
+      function abrir(idx) {
+        editIdx = idx;
+        var v = idx >= 0 ? ings[idx] : { nombre: '', icono: 'restaurant', tipo: 'verdura', activo: true };
+        form.innerHTML =
+          '<div class="flex items-center justify-between"><h2 id="ing-title" class="font-headline text-headline-md text-ink-black">' + (idx >= 0 ? 'Editar ingrediente' : 'Nuevo ingrediente') + '</h2>' +
+            '<button type="button" data-cerrar aria-label="Cerrar" class="w-9 h-9 rounded-full bg-washi border border-kintsugi-gold flex items-center justify-center"><span class="material-symbols-outlined" aria-hidden="true">close</span></button></div>' +
+          '<div class="flex flex-col gap-gutter-xs"><label for="ing-nombre" class="font-label text-label-sm">Nombre</label>' +
+            '<input id="ing-nombre" required value="' + esc(v.nombre) + '" placeholder="Ej. Philadelphia" class="rounded-md bg-washi border border-kintsugi-gold/70 px-gutter-md py-gutter-sm font-body text-body-md focus:border-primary focus:ring-0"></div>' +
+          '<fieldset class="flex flex-col gap-gutter-xs"><legend class="font-label text-label-sm mb-gutter-xs">Si lo piden de extra, cobra como</legend><div class="grid grid-cols-2 gap-gutter-xs">' +
+            ['verdura', 'proteina'].map(function (t) {
+              return '<label class="flex items-center gap-gutter-xs p-gutter-sm rounded-md bg-washi border border-kintsugi-gold/60 font-label text-label-sm">' +
+                '<input type="radio" name="tipo" value="' + t + '"' + (v.tipo === t ? ' checked' : '') + ' class="text-primary border-kintsugi-gold focus:ring-primary">' +
+                (t === 'verdura' ? 'Verdura (' + U.money(cfg.extraVerdura) + ')' : 'Proteína (' + U.money(cfg.extraProteina) + ')') + '</label>';
+            }).join('') + '</div></fieldset>' +
+          '<fieldset class="flex flex-col gap-gutter-xs"><legend class="font-label text-label-sm mb-gutter-xs">Ícono</legend><div class="flex flex-wrap gap-gutter-xs">' +
+            ICONOS.map(function (ic) {
+              return '<label class="cursor-pointer"><input type="radio" name="icono" value="' + ic + '"' + (v.icono === ic ? ' checked' : '') + ' class="peer sr-only">' +
+                '<span class="w-10 h-10 rounded-md border border-kintsugi-gold/60 bg-washi flex items-center justify-center peer-checked:bg-secondary peer-checked:text-on-secondary peer-focus-visible:ring-2 peer-focus-visible:ring-primary">' +
+                '<span class="material-symbols-outlined" aria-hidden="true">' + ic + '</span><span class="sr-only">' + ic + '</span></span></label>';
+            }).join('') + '</div></fieldset>' +
+          '<p id="ing-error" class="hidden font-body text-body-sm text-error" role="alert">Escribe el nombre del ingrediente.</p>' +
+          '<button type="submit" class="w-full py-gutter-md rounded-full bg-primary text-on-primary border border-kintsugi-gold font-label text-label-lg">Listo</button>' +
+          (idx >= 0 ? '<button type="button" id="ing-borrar" class="w-full py-gutter-sm rounded-full border border-error/40 text-error font-label text-label-sm">Quitar ingrediente</button>' : '');
+
+        form.querySelector('[data-cerrar]').addEventListener('click', function () { sheet.close(); });
+        var borrar = document.getElementById('ing-borrar');
+        if (borrar) borrar.addEventListener('click', function () {
+          ings.splice(editIdx, 1); cambios = true; sheet.close(); renderIngs();
+        });
+        sheet.showModal();
+        document.getElementById('ing-nombre').focus();
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var nombre = document.getElementById('ing-nombre').value.trim();
+        if (!nombre) { document.getElementById('ing-error').classList.remove('hidden'); return; }
+        var v = {
+          nombre: nombre,
+          tipo: form.querySelector('[name=tipo]:checked').value,
+          icono: (form.querySelector('[name=icono]:checked') || {}).value || 'restaurant'
+        };
+        if (editIdx >= 0) Object.assign(ings[editIdx], v);
+        else { v.id = S.uid(nombre, ings); v.activo = true; ings.push(v); }
+        cambios = true; sheet.close(); renderIngs();
+      });
+
+      document.getElementById('guardar').addEventListener('click', function () {
+        document.querySelectorAll('[data-rollo]').forEach(function (inp) {
+          var r = S.producto(inp.getAttribute('data-rollo'));
+          if (r && inp.value !== '') r.precio = Math.max(0, Number(inp.value));
+        });
+        cfg.incluidos = Math.min(6, Math.max(1, Number(document.getElementById('incluidos').value) || 3));
+        cfg.extraVerdura = Math.max(0, Number(document.getElementById('extra-veg').value) || 0);
+        cfg.extraProteina = Math.max(0, Number(document.getElementById('extra-pro').value) || 0);
+        cfg.ingredientes = ings;
+        if (S.save()) { cambios = false; U.toast('Configuración guardada'); }
+      });
+
+      window.addEventListener('beforeunload', function (e) { if (cambios) { e.preventDefault(); e.returnValue = ''; } });
+
+      renderIngs();
+    })();
+  </script>
+</body>
+</html>

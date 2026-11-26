@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#141414">
+  <title>Kintsugi Banderilla — Bienvenida</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Caveat:wght@700&family=Noto+Sans+JP:wght@400;700&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/kintsugi.css">
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/ui.js"></script>
+</head>
+<body class="bg-dark-surface text-washi font-body antialiased">
+  <main id="app" class="relative min-h-app max-w-md mx-auto flex flex-col justify-between overflow-hidden bg-dark-surface"></main>
+
+  <script>
+    (function () {
+      var S = KStore, U = KUI, n = S.data.negocio, esc = U.esc;
+      var bg = S.data.fondos.bienvenida;
+
+      document.getElementById('app').innerHTML =
+        // Imagen de fondo completa con la mascota Panda Kintsugi
+        (bg ? '<img src="' + esc(U.src(bg)) + '" alt="Mascota Panda Kintsugi comiendo ramen" class="absolute inset-0 w-full h-full object-cover object-center">'
+            : '<div class="absolute inset-0 bg-sumi-dark"></div>') +
+        '<div class="absolute inset-0 bg-gradient-to-b from-dark-surface/65 via-transparent to-dark-surface/90"></div>' +
+
+        // Encabezado superior con título KINTSUGI en pincel rojo
+        '<div class="relative z-10 px-page-margin pt-gutter-xl flex flex-col items-center text-center gap-gutter-sm">' +
+          '<div class="px-gutter-xl py-gutter-sm rounded-lg bg-washi/95 border-2 border-kintsugi-gold">' +
+            '<h1 class="font-display text-display-lg text-primary leading-none tracking-wider uppercase">KINTSUGI</h1>' +
+          '</div>' +
+          '<span class="px-gutter-md py-gutter-xs rounded-full bg-washi/95 border border-kintsugi-gold font-label text-label-sm text-ink-black tracking-wider uppercase">' + esc(n.lema) + '</span>' +
+        '</div>' +
+
+        // Tarjeta inferior con invitación y botón para abrir el menú digital
+        '<div class="relative z-10 px-page-margin pb-gutter-xl flex flex-col gap-gutter-md">' +
+          '<div class="rounded-xl bg-washi/95 border-2 border-kintsugi-gold p-gutter-lg flex flex-col items-center text-center gap-gutter-md">' +
+            '<div class="flex flex-col gap-gutter-xs">' +
+              '<h2 class="font-headline text-headline-md text-ink-black uppercase">' + esc(n.bienvenidaTitulo) + '</h2>' +
+              '<p class="font-body text-body-md text-smoke-gray text-pretty">' + esc(n.bienvenidaTexto) + '</p>' +
+            '</div>' +
+            '<a href="menu.html" class="inline-flex items-center justify-center gap-gutter-sm w-full py-gutter-md px-gutter-xl rounded-full bg-primary text-on-primary border-2 border-kintsugi-gold hover:bg-primary/90 active:scale-95 transition-transform duration-state-change">' +
+              '<span class="material-symbols-outlined text-title-md" aria-hidden="true">menu_book</span>' +
+              '<span class="font-label text-label-lg">Abrir menú digital</span>' +
+            '</a>' +
+            '<p class="font-body text-body-sm text-smoke-gray">' + esc(n.horario) + ' · ' + esc(n.zona) + '</p>' +
+          '</div>' +
+          '<a href="admin/index.html" class="self-center inline-flex items-center gap-1 font-label text-label-sm text-washi/70 hover:text-washi">' +
+            '<span class="material-symbols-outlined text-body-md" aria-hidden="true">lock</span>Acceso del dueño</a>' +
+        '</div>';
+    })();
+  </script>
+</body>
+</html>

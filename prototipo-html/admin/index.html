@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF8F4">
+  <meta name="robots" content="noindex">
+  <title>Kintsugi Banderilla — Acceso del dueño</title>
+  <script>window.KROOT = '../';</script>
+  <script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
+  <script src="../assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Caveat:wght@700&family=Noto+Sans+JP:wght@400;700&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/kintsugi.css">
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/ui.js"></script>
+</head>
+<body class="bg-light-surface text-ink-black font-body antialiased">
+  <main class="relative min-h-app max-w-md mx-auto bg-light-surface flex flex-col justify-center px-page-margin py-gutter-xl overflow-hidden">
+    <!-- Fondo artesanal -->
+    <div class="absolute inset-0 bg-sumi pointer-events-none" aria-hidden="true"></div>
+
+    <div class="relative z-10 flex flex-col gap-gutter-lg">
+      <!-- Marca y mascota -->
+      <div class="flex flex-col items-center text-center gap-gutter-sm">
+        <img id="mascota" src="../assets/img/panda.jpg" alt="Mascota Panda Kintsugi" class="w-24 h-24 rounded-full object-cover object-top border-2 border-kintsugi-gold">
+        <div class="flex items-center gap-gutter-xs px-gutter-md py-gutter-xs rounded-md bg-light-surface-container-low/90 border border-kintsugi-gold">
+          <span class="px-1.5 py-0.5 rounded-sm bg-primary text-on-primary font-body text-body-sm font-bold" aria-hidden="true">金継</span>
+          <h1 class="font-display text-display-lg-mobile text-primary uppercase tracking-wider">KINTSUGI</h1>
+        </div>
+        <span class="px-gutter-md py-0.5 rounded-full bg-secondary text-on-secondary font-label text-label-sm">Panel del Dueño · Administración</span>
+      </div>
+
+      <!-- Tarjeta de acceso -->
+      <form id="login" novalidate class="rounded-xl bg-light-surface-container-low/85 border-2 border-kintsugi-gold p-gutter-xl flex flex-col gap-gutter-lg">
+        <div class="flex flex-col gap-gutter-xs">
+          <h2 class="font-headline text-headline-md text-ink-black">Acceso al panel</h2>
+          <p class="font-body text-body-sm text-smoke-gray">Edita platillos, precios, promociones y fondos sin depender de nadie.</p>
+        </div>
+
+        <div class="flex flex-col gap-gutter-md">
+          <div class="flex flex-col gap-gutter-xs">
+            <label for="admin-email" class="font-label text-label-sm text-ink-black">Correo electrónico</label>
+            <div class="flex items-center gap-gutter-sm px-gutter-md py-gutter-xs rounded-md bg-washi border border-kintsugi-gold/70 focus-within:border-primary">
+              <span class="material-symbols-outlined text-smoke-gray text-title-md" aria-hidden="true">mail</span>
+              <input id="admin-email" type="email" autocomplete="username" required class="w-full bg-transparent border-none text-ink-black font-body text-body-md focus:ring-0 p-1">
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-gutter-xs">
+            <label for="admin-pass" class="font-label text-label-sm text-ink-black">Contraseña</label>
+            <div class="flex items-center gap-gutter-sm px-gutter-md py-gutter-xs rounded-md bg-washi border border-kintsugi-gold/70 focus-within:border-primary">
+              <span class="material-symbols-outlined text-smoke-gray text-title-md" aria-hidden="true">lock</span>
+              <input id="admin-pass" type="password" autocomplete="current-password" required class="w-full bg-transparent border-none text-ink-black font-body text-body-md focus:ring-0 p-1">
+              <button type="button" id="toggle-pass" aria-label="Mostrar contraseña" class="text-smoke-gray hover:text-ink-black p-1">
+                <span class="material-symbols-outlined text-title-md" aria-hidden="true">visibility</span>
+              </button>
+            </div>
+          </div>
+          <p id="login-error" class="hidden font-body text-body-sm text-error flex items-center gap-1" role="alert">
+            <span class="material-symbols-outlined text-body-md" aria-hidden="true">error</span>Correo o contraseña incorrectos.
+          </p>
+        </div>
+
+        <button type="submit" class="inline-flex items-center justify-center gap-gutter-sm w-full py-gutter-md px-gutter-xl rounded-full bg-primary text-on-primary border border-kintsugi-gold font-label text-label-lg hover:bg-primary/90 active:scale-95 transition-transform duration-state-change">
+          <span class="material-symbols-outlined text-title-md" aria-hidden="true">login</span>
+          <span>Entrar al panel</span>
+        </button>
+        <p class="font-body text-body-sm text-smoke-gray text-center">Demo: los datos de acceso ya vienen escritos.</p>
+      </form>
+
+      <!-- Volver al menú público -->
+      <div class="flex justify-center">
+        <a href="../index.html" class="inline-flex items-center gap-1 px-gutter-md py-gutter-xs rounded-full bg-washi border border-kintsugi-gold/70 font-label text-label-sm text-ink-black hover:border-primary">
+          <span class="material-symbols-outlined text-body-md" aria-hidden="true">arrow_back</span>
+          <span>Volver al menú público</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var S = KStore, U = KUI;
+      if (U.isLogged()) { location.replace('panel.html'); return; }
+
+      document.getElementById('mascota').src = U.src(S.data.mascota);
+      var email = document.getElementById('admin-email');
+      var pass = document.getElementById('admin-pass');
+      // Prototipo: credenciales de demostración precargadas, como en el diseño.
+      email.value = S.data.admin.email;
+      pass.value = S.data.admin.password;
+
+      var btn = document.getElementById('toggle-pass');
+      btn.addEventListener('click', function () {
+        var isPass = pass.type === 'password';
+        pass.type = isPass ? 'text' : 'password';
+        btn.setAttribute('aria-label', isPass ? 'Ocultar contraseña' : 'Mostrar contraseña');
+        btn.querySelector('.material-symbols-outlined').textContent = isPass ? 'visibility_off' : 'visibility';
+      });
+
+      document.getElementById('login').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var ok = email.value.trim().toLowerCase() === S.data.admin.email.toLowerCase() && pass.value === S.data.admin.password;
+        document.getElementById('login-error').classList.toggle('hidden', ok);
+        if (ok) { U.login(); location.href = 'panel.html'; }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF8F4">
+  <meta name="robots" content="noindex">
+  <title>Kintsugi Banderilla — Apariencia y negocio</title>
+  <script>window.KROOT = '../';</script>
+  <script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
+  <script src="../assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Caveat:wght@700&family=Noto+Sans+JP:wght@400;700&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/kintsugi.css">
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script>KUI.guard();</script>
+</head>
+<body class="bg-light-surface text-ink-black font-body antialiased">
+  <div id="app" class="relative min-h-app max-w-md mx-auto bg-light-surface flex flex-col overflow-x-hidden"></div>
+
+  <script>
+    (function () {
+      var S = KStore, U = KUI, esc = U.esc, D = S.data, n = D.negocio;
+      var input = 'rounded-md bg-light-surface-container-low border border-kintsugi-gold/70 px-gutter-md py-gutter-sm font-body text-body-md text-ink-black focus:border-primary focus:ring-0';
+
+      var FONDOS = [['bienvenida', 'Bienvenida']].concat(D.secciones.map(function (s) { return [s.id, s.nombre]; }));
+      var CAMPOS = [
+        ['whatsapp', 'WhatsApp para pedidos', 'tel', '228 123 4567'],
+        ['horario', 'Horario de atención', 'text', 'Mar a Dom · 1:00 PM – 10:00 PM'],
+        ['direccion', 'Dirección', 'text', 'Centro, Banderilla, Veracruz'],
+        ['zona', 'Zona corta (portada)', 'text', 'Centro, Banderilla'],
+        ['bienvenidaTexto', 'Mensaje de bienvenida', 'text', ''],
+        ['facebook', 'Facebook (enlace)', 'url', 'https://facebook.com/…'],
+        ['instagram', 'Instagram (enlace)', 'url', 'https://instagram.com/…']
+      ];
+
+      document.getElementById('app').innerHTML =
+        U.adminBg() +
+        U.adminHeader('Apariencia y negocio',
+          '<button type="button" id="salir" class="inline-flex items-center gap-1 px-gutter-md py-gutter-xs rounded-full bg-light-surface-container-low border border-kintsugi-gold font-label text-label-sm text-ink-black shrink-0">' +
+          '<span class="material-symbols-outlined text-body-md" aria-hidden="true">logout</span><span>Salir</span></button>') +
+
+        '<main class="relative z-10 flex-1 px-page-margin py-gutter-lg flex flex-col gap-gutter-xl">' +
+          '<section class="flex flex-col gap-gutter-md">' +
+            '<h2 class="font-headline text-title-md text-ink-black uppercase">Fondos por sección</h2>' +
+            '<div id="fondos" class="grid grid-cols-2 gap-gutter-sm"></div>' +
+          '</section>' +
+
+          '<section class="flex flex-col gap-gutter-md">' +
+            '<h2 class="font-headline text-title-md text-ink-black uppercase">Datos y WhatsApp</h2>' +
+            '<form id="datos" class="flex flex-col gap-gutter-md" novalidate>' +
+              '<div class="rounded-lg bg-light-surface-container-low/85 border border-kintsugi-gold p-gutter-md flex flex-col gap-gutter-sm">' +
+                CAMPOS.map(function (c) {
+                  return '<div class="flex flex-col gap-gutter-xs"><label for="biz-' + c[0] + '" class="font-label text-label-sm text-ink-black">' + c[1] + '</label>' +
+                    '<input id="biz-' + c[0] + '" type="' + c[2] + '" value="' + esc(n[c[0]]) + '" placeholder="' + esc(c[3]) + '" class="' + input + (c[2] === 'tel' ? ' tabular-nums' : '') + '"></div>';
+                }).join('') +
+              '</div>' +
+              '<button type="submit" class="inline-flex items-center justify-center gap-gutter-sm w-full py-gutter-md px-gutter-xl rounded-full bg-primary text-on-primary border border-kintsugi-gold font-label text-label-lg">' +
+                '<span class="material-symbols-outlined text-title-md" aria-hidden="true">save</span><span>Guardar ajustes</span></button>' +
+            '</form>' +
+          '</section>' +
+
+          '<section class="flex flex-col gap-gutter-sm rounded-lg bg-light-surface-container-low/85 border border-kintsugi-gold/60 p-gutter-md">' +
+            '<h2 class="font-headline text-title-md text-ink-black uppercase">Prototipo</h2>' +
+            '<p class="font-body text-body-sm text-smoke-gray">Los cambios se guardan en este navegador. Puedes volver al menú de ejemplo cuando quieras.</p>' +
+            '<button type="button" id="reset" class="self-start px-gutter-md py-gutter-xs rounded-full border border-error/40 text-error font-label text-label-sm">Restablecer datos de ejemplo</button>' +
+          '</section>' +
+        '</main>' +
+        U.adminNav('ajustes');
+
+      function renderFondos() {
+        document.getElementById('fondos').innerHTML = FONDOS.map(function (f) {
+          var val = D.fondos[f[0]];
+          return '<div class="rounded-md bg-light-surface-container-low border border-kintsugi-gold p-gutter-sm flex flex-col gap-gutter-xs">' +
+            (val ? '<img src="' + esc(U.src(val)) + '" alt="Fondo ' + esc(f[1]) + '" class="w-full h-24 rounded-sm object-cover border border-kintsugi-gold/60">'
+                 : '<div class="w-full h-24 rounded-sm bg-sumi border border-kintsugi-gold/60" role="img" aria-label="Fondo sumi-e predeterminado"></div>') +
+            '<span class="font-label text-label-sm text-ink-black">' + esc(f[1]) + '</span>' +
+            '<div class="flex gap-gutter-xs">' +
+              '<button type="button" data-cambiar="' + esc(f[0]) + '" class="flex-1 h-8 rounded-full bg-secondary text-on-secondary font-label text-label-sm">Cambiar</button>' +
+              (val ? '<button type="button" data-quitar="' + esc(f[0]) + '" aria-label="Usar fondo predeterminado en ' + esc(f[1]) + '" class="w-8 h-8 shrink-0 inline-flex items-center justify-center rounded-full bg-washi border border-kintsugi-gold/60 text-smoke-gray"><span class="material-symbols-outlined text-body-md" aria-hidden="true">restart_alt</span></button>' : '') +
+            '</div></div>';
+        }).join('');
+      }
+
+      document.getElementById('fondos').addEventListener('click', function (e) {
+        var c = e.target.closest('[data-cambiar]'), q = e.target.closest('[data-quitar]');
+        if (c) {
+          U.pickImage(1200).then(function (data) {
+            D.fondos[c.getAttribute('data-cambiar')] = data;
+            if (S.save()) { U.toast('Fondo actualizado'); renderFondos(); }
+          });
+        } else if (q) {
+          D.fondos[q.getAttribute('data-quitar')] = null;
+          if (S.save()) { U.toast('Se usará el fondo predeterminado'); renderFondos(); }
+        }
+      });
+
+      document.getElementById('datos').addEventListener('submit', function (e) {
+        e.preventDefault();
+        CAMPOS.forEach(function (c) { n[c[0]] = document.getElementById('biz-' + c[0]).value.trim(); });
+        if (S.save()) U.toast('Ajustes guardados');
+      });
+
+      document.getElementById('salir').addEventListener('click', function () { U.logout(); location.href = 'index.html'; });
+      document.getElementById('reset').addEventListener('click', function () {
+        if (!confirm('¿Borrar todos tus cambios y volver al menú de ejemplo?')) return;
+        S.reset(); location.reload();
+      });
+
+      renderFondos();
+    })();
+  </script>
+</body>
+</html>

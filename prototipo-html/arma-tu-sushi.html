@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F2EEE6">
+  <title>Kintsugi Banderilla — Arma tu sushi</title>
+  <script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
+  <script src="assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Caveat:wght@700&family=Noto+Sans+JP:wght@400;700&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/kintsugi.css">
+  <script src="assets/js/store.js"></script>
+  <script src="assets/js/ui.js"></script>
+</head>
+<body class="bg-light-surface text-ink-black font-body antialiased">
+  <div id="app" class="relative min-h-app max-w-md mx-auto bg-light-surface flex flex-col overflow-x-hidden"></div>
+
+  <script>
+    (function () {
+      var S = KStore, U = KUI, esc = U.esc, D = S.data, cfg = D.sushi;
+
+      var catSushi = D.categorias.filter(function (c) { return c.armable; })[0];
+      var rollos = catSushi ? S.productosDe(catSushi.id) : [];
+      var ings = cfg.ingredientes.filter(function (i) { return i.activo; });
+      var max = Number(cfg.incluidos) || 3;
+
+      // Rollo inicial: el del enlace (?rollo=), si no el primero en promoción, si no el primero disponible.
+      var disponibles = rollos.filter(function (r) { return r.disponible; });
+      var rollo = S.producto(U.param('rollo'));
+      if (!rollo || !rollo.disponible || rollo.cat !== (catSushi && catSushi.id)) {
+        rollo = disponibles.filter(function (r) { return S.promoDe(r.id); })[0] || disponibles[0] || null;
+      }
+      var elegidos = [];
+      var extras = { verdura: false, proteina: false };
+
+      function paso(kanji, titulo, derecha) {
+        return '<div class="flex items-center justify-between gap-gutter-sm border-b border-kintsugi-gold/80 pb-gutter-xs">' +
+          '<div class="flex items-center gap-gutter-sm"><span class="w-7 h-7 rounded-sm bg-primary text-on-primary flex items-center justify-center font-body text-body-sm font-bold shrink-0" aria-hidden="true">' + kanji + '</span>' +
+          '<h2 class="font-headline text-title-md text-ink-black uppercase">' + titulo + '</h2></div>' + derecha + '</div>';
+      }
+
+      function rollCard(r) {
+        var promo = S.promoDe(r.id);
+        return '<button type="button" data-rollo="' + esc(r.id) + '"' + (r.disponible ? '' : ' disabled') + ' role="radio" aria-checked="false" class="roll-card text-left flex items-center gap-gutter-md p-gutter-md rounded-md transition-colors duration-state-change">' +
+          U.thumb(r, 'w-16 h-16 text-headline-lg', 'rounded-sm') +
+          '<div class="flex-1 min-w-0">' +
+            (promo ? '<span class="inline-flex items-center px-gutter-sm py-0.5 rounded-sm bg-primary text-on-primary mb-1"><span class="font-label text-label-sm">' + esc(promo.etiqueta || promo.titulo) + '</span></span>' : '') +
+            (r.disponible ? '' : '<span class="inline-flex items-center px-gutter-sm py-0.5 rounded-sm bg-smoke-gray text-washi mb-1 ml-1"><span class="font-label text-label-sm">Agotado</span></span>') +
+            '<div class="flex items-baseline justify-between gap-gutter-sm">' +
+              '<h3 class="font-headline text-title-md text-ink-black uppercase">' + esc(r.nombre) + (r.jp ? ' <span class="font-body text-body-sm text-smoke-gray font-normal ml-1">' + esc(r.jp) + '</span>' : '') + '</h3>' +
+              '<span class="roll-price font-price text-price-md tabular-nums shrink-0">' + U.money(r.precio) + '</span>' +
+            '</div>' +
+            '<p class="font-body text-body-sm text-smoke-gray">' + esc(r.desc || r.sub) + '</p>' +
+          '</div></button>';
+      }
+
+      document.getElementById('app').innerHTML =
+        // Fondo artesanal fijo
+        '<div class="fixed inset-0 max-w-md mx-auto pointer-events-none z-0 overflow-hidden">' + U.fondo('entradas', 'w-full h-full') + '</div>' +
+
+        '<header class="sticky top-0 z-30 bg-washi/85 backdrop-blur-sm border-b border-kintsugi-gold px-page-margin py-gutter-md flex items-center justify-between gap-gutter-md">' +
+          '<a href="menu.html" aria-label="Volver al menú" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-washi text-ink-black border border-ink-black/30 hover:border-primary"><span class="material-symbols-outlined text-title-md" aria-hidden="true">arrow_back</span></a>' +
+          '<div class="flex flex-col items-center"><h1 class="font-display text-headline-lg text-primary uppercase tracking-wide leading-none">Arma tu sushi</h1>' +
+          '<span class="font-body text-body-sm text-smoke-gray mt-0.5">Combina a tu antojo · 寿司</span></div>' +
+          '<div class="w-10 h-10 rounded-full overflow-hidden border border-kintsugi-gold shrink-0"><img src="' + esc(U.src(D.mascota)) + '" alt="" class="w-full h-full object-cover object-top"></div>' +
+        '</header>' +
+
+        '<main class="relative z-10 flex-1 px-page-margin py-gutter-xl flex flex-col gap-section pb-gutter-xl">' +
+          '<section class="flex flex-col gap-gutter-md">' +
+            paso('一', 'Tipo de rollo', '<span class="px-gutter-sm py-0.5 rounded-sm bg-washi font-label text-label-sm text-ink-black">Elige 1</span>') +
+            '<div class="grid grid-cols-1 gap-gutter-md" role="radiogroup" aria-label="Tipo de rollo">' + rollos.map(rollCard).join('') + '</div>' +
+          '</section>' +
+
+          '<section class="flex flex-col gap-gutter-md">' +
+            paso('二', 'Elige ' + max + ' ingredientes', '<span id="ing-counter" class="px-gutter-sm py-0.5 rounded-sm bg-washi/90 font-label text-label-sm text-ink-black tabular-nums shrink-0"></span>') +
+            '<div class="grid grid-cols-2 gap-gutter-sm">' +
+              ings.map(function (i) {
+                return '<button type="button" data-ing="' + esc(i.nombre) + '" aria-pressed="false" class="ing-chip flex items-center gap-gutter-sm px-gutter-md py-gutter-sm rounded-md border transition-colors duration-state-change">' +
+                  '<span class="material-symbols-outlined text-body-md" aria-hidden="true">' + esc(i.icono || 'restaurant') + '</span>' +
+                  '<span class="font-label text-label-sm text-left">' + esc(i.nombre) + '</span></button>';
+              }).join('') +
+            '</div>' +
+          '</section>' +
+
+          '<section class="flex flex-col gap-gutter-md">' +
+            paso('三', 'Extras', '<span class="font-label text-label-sm text-smoke-gray">Opcional</span>') +
+            '<div class="grid grid-cols-2 gap-gutter-sm">' +
+              '<button type="button" data-extra="verdura" aria-pressed="false" class="extra-chip flex items-center justify-between px-gutter-md py-gutter-md rounded-md border transition-colors duration-state-change"><span class="font-label text-label-sm">Verduras</span><span class="font-price text-price-md tabular-nums">+' + U.money(cfg.extraVerdura) + '</span></button>' +
+              '<button type="button" data-extra="proteina" aria-pressed="false" class="extra-chip flex items-center justify-between px-gutter-md py-gutter-md rounded-md border transition-colors duration-state-change"><span class="font-label text-label-sm">Proteínas</span><span class="font-price text-price-md tabular-nums">+' + U.money(cfg.extraProteina) + '</span></button>' +
+            '</div>' +
+          '</section>' +
+        '</main>' +
+
+        '<footer class="sticky bottom-0 z-30 bg-dark-surface/95 backdrop-blur-sm border-t-2 border-kintsugi-gold px-page-margin py-gutter-md flex flex-col gap-gutter-sm">' +
+          '<div class="flex items-center justify-between gap-gutter-md">' +
+            '<p id="summary-text" class="min-w-0 flex-1 font-body text-body-sm text-washi text-pretty"></p>' +
+            '<span id="total-price" class="font-price text-price-lg text-kintsugi-gold tabular-nums shrink-0"></span>' +
+          '</div>' +
+          '<a id="whatsapp-btn" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-gutter-sm w-full py-gutter-md px-gutter-xl rounded-full border border-kintsugi-gold transition-colors duration-state-change">' +
+            '<span class="material-symbols-outlined text-title-md" aria-hidden="true">send</span><span class="font-label text-label-lg">Enviar por WhatsApp</span></a>' +
+        '</footer>';
+
+      var rollCards = document.querySelectorAll('.roll-card');
+      var ingChips = document.querySelectorAll('.ing-chip');
+      var extraChips = document.querySelectorAll('.extra-chip');
+
+      function setCls(el, on, add, remove) {
+        add.split(' ').forEach(function (c) { el.classList.toggle(c, on); });
+        remove.split(' ').forEach(function (c) { el.classList.toggle(c, !on); });
+      }
+
+      function total() {
+        return (rollo ? Number(rollo.precio) : 0) +
+          (extras.verdura ? Number(cfg.extraVerdura) : 0) +
+          (extras.proteina ? Number(cfg.extraProteina) : 0);
+      }
+
+      function update() {
+        rollCards.forEach(function (c) {
+          var on = rollo && c.getAttribute('data-rollo') === rollo.id;
+          c.setAttribute('aria-checked', on ? 'true' : 'false');
+          setCls(c, on, 'bg-washi/90 border-2 border-primary', 'bg-washi/70 border border-kintsugi-gold/60 hover:border-primary');
+          if (c.disabled) c.classList.add('opacity-50', 'cursor-not-allowed');
+          var pr = c.querySelector('.roll-price');
+          setCls(pr, on, 'text-primary', 'text-ink-black');
+        });
+
+        var lleno = elegidos.length >= max;
+        document.getElementById('ing-counter').textContent = elegidos.length + '/' + max + ' elegidos';
+        ingChips.forEach(function (chip) {
+          var sel = elegidos.indexOf(chip.getAttribute('data-ing')) !== -1;
+          var off = !sel && lleno;
+          chip.setAttribute('aria-pressed', sel ? 'true' : 'false');
+          chip.disabled = off;
+          chip.className = 'ing-chip flex items-center gap-gutter-sm px-gutter-md py-gutter-sm rounded-md border transition-colors duration-state-change ' +
+            (sel ? 'bg-secondary text-on-secondary border-kintsugi-gold'
+                 : off ? 'bg-washi/40 text-smoke-gray/50 border-ink-black/20 cursor-not-allowed'
+                       : 'bg-washi/75 text-ink-black border-kintsugi-gold/60');
+          chip.querySelector('.material-symbols-outlined').classList.toggle('text-secondary', !sel && !off);
+        });
+
+        extraChips.forEach(function (chip) {
+          var on = extras[chip.getAttribute('data-extra')];
+          chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+          setCls(chip, on, 'bg-secondary text-on-secondary border-kintsugi-gold', 'bg-washi/75 text-ink-black border-kintsugi-gold/60');
+        });
+
+        var resumen = (rollo ? rollo.nombre : 'Elige un rollo') + ' · ' + (elegidos.length ? elegidos.join(', ') : 'Elige tus ingredientes');
+        var extrasTxt = [extras.verdura ? 'Verduras' : '', extras.proteina ? 'Proteínas' : ''].filter(Boolean);
+        if (extrasTxt.length) resumen += ' + Extra: ' + extrasTxt.join(', ');
+        document.getElementById('summary-text').textContent = resumen;
+        document.getElementById('total-price').textContent = U.money(total());
+
+        var listo = rollo && elegidos.length === max;
+        var btn = document.getElementById('whatsapp-btn');
+        setCls(btn, listo, 'bg-primary text-on-primary hover:bg-primary/90', 'bg-smoke-gray text-washi/70');
+        btn.setAttribute('aria-disabled', listo ? 'false' : 'true');
+        btn.href = listo
+          ? U.waLink('¡Hola Kintsugi! Quiero armar un ' + rollo.nombre + ' con: ' + elegidos.join(', ') +
+              (extrasTxt.length ? '. Extra: ' + extrasTxt.join(', ') : '') + '. Total: ' + U.money(total()))
+          : '#';
+      }
+
+      rollCards.forEach(function (c) {
+        c.addEventListener('click', function () { rollo = S.producto(c.getAttribute('data-rollo')); update(); });
+      });
+      ingChips.forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var ing = chip.getAttribute('data-ing'), i = elegidos.indexOf(ing);
+          if (i !== -1) elegidos.splice(i, 1); else if (elegidos.length < max) elegidos.push(ing);
+          update();
+        });
+      });
+      extraChips.forEach(function (chip) {
+        chip.addEventListener('click', function () { var k = chip.getAttribute('data-extra'); extras[k] = !extras[k]; update(); });
+      });
+      document.getElementById('whatsapp-btn').addEventListener('click', function (e) {
+        if (this.getAttribute('aria-disabled') === 'true') {
+          e.preventDefault();
+          U.toast(rollo ? 'Elige ' + (max - elegidos.length) + ' ingrediente(s) más' : 'Primero elige tu rollo');
+        }
+      });
+
+      update();
+    })();
+  </script>
+</body>
+</html>

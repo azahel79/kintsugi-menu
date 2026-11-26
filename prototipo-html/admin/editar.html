@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#FAF8F4">
+  <meta name="robots" content="noindex">
+  <title>Kintsugi Banderilla — Editar platillo</title>
+  <script>window.KROOT = '../';</script>
+  <script src="https://cdn.tailwindcss.com/3.4.16?plugins=forms,container-queries"></script>
+  <script src="../assets/js/tailwind-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Arvo:wght@400;700&family=Caveat:wght@700&family=Noto+Sans+JP:wght@400;700&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../assets/css/kintsugi.css">
+  <script src="../assets/js/store.js"></script>
+  <script src="../assets/js/ui.js"></script>
+  <script>KUI.guard();</script>
+</head>
+<body class="bg-light-surface text-ink-black font-body antialiased">
+  <div id="app" class="relative min-h-app max-w-md mx-auto bg-light-surface flex flex-col overflow-x-hidden"></div>
+
+  <script>
+    (function () {
+      var S = KStore, U = KUI, esc = U.esc, D = S.data;
+
+      var original = S.producto(U.param('id'));
+      var nuevo = !original;
+      var p = original ? JSON.parse(JSON.stringify(original)) : {
+        id: '', cat: S.categoria(U.param('cat')) ? U.param('cat') : D.categorias[0].id,
+        nombre: '', jp: '', precio: '', sub: '', desc: '', img: '', disponible: true, etiquetas: [], opciones: null
+      };
+      var ETIQUETAS = ['Especialidad', 'Nuevo', 'Picante opcional', 'Picante', 'Vegetariano'];
+
+      var input = 'rounded-md bg-washi border border-kintsugi-gold/70 px-gutter-md py-gutter-sm font-body text-body-md text-ink-black focus:border-primary focus:ring-0';
+      var label = 'font-label text-label-sm text-ink-black';
+
+      document.getElementById('app').innerHTML =
+        U.adminBg() +
+        U.adminBackHeader(nuevo ? 'Nuevo platillo' : 'Editar platillo', 'platillos.html', 'Volver a platillos') +
+
+        '<main class="relative z-10 flex-1 px-page-margin py-gutter-lg flex flex-col gap-gutter-lg">' +
+          '<div class="rounded-lg bg-light-surface-container-low border border-kintsugi-gold p-gutter-md flex items-center gap-gutter-md">' +
+            '<div id="foto"></div>' +
+            '<div class="flex flex-col gap-gutter-xs">' +
+              '<span class="' + label + '">Fotografía del platillo</span>' +
+              '<div class="flex flex-wrap gap-gutter-xs">' +
+                '<button type="button" id="cambiar-foto" class="inline-flex items-center gap-1 px-gutter-md py-gutter-xs rounded-full bg-secondary text-on-secondary font-label text-label-sm self-start">' +
+                  '<span class="material-symbols-outlined text-body-md" aria-hidden="true">photo_camera</span><span>Cambiar foto</span></button>' +
+                '<button type="button" id="quitar-foto" class="px-gutter-md py-gutter-xs rounded-full bg-washi border border-kintsugi-gold/70 font-label text-label-sm text-smoke-gray">Quitar</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+
+          '<form id="form" class="flex flex-col gap-gutter-md" novalidate>' +
+            '<div class="flex flex-col gap-gutter-xs">' +
+              '<label for="dish-name" class="' + label + '">Nombre en español</label>' +
+              '<input id="dish-name" type="text" required value="' + esc(p.nombre) + '" class="' + input + ' font-headline text-title-md uppercase">' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-gutter-md">' +
+              '<div class="flex flex-col gap-gutter-xs"><label for="dish-jp" class="' + label + '">Nombre japonés</label>' +
+                '<input id="dish-jp" type="text" value="' + esc(p.jp) + '" placeholder="Opcional" class="' + input + '"></div>' +
+              '<div class="flex flex-col gap-gutter-xs"><label for="dish-price" class="' + label + '">Precio (MXN $)</label>' +
+                '<input id="dish-price" type="number" inputmode="decimal" min="0" step="1" required value="' + esc(p.precio) + '" class="' + input + ' font-headline text-title-md text-primary tabular-nums"></div>' +
+            '</div>' +
+            '<div class="flex flex-col gap-gutter-xs"><label for="dish-cat" class="' + label + '">Categoría</label>' +
+              '<select id="dish-cat" class="' + input + '">' +
+                D.categorias.map(function (c) { return '<option value="' + esc(c.id) + '"' + (c.id === p.cat ? ' selected' : '') + '>' + esc(c.nombre) + '</option>'; }).join('') +
+              '</select></div>' +
+            '<div class="flex flex-col gap-gutter-xs"><label for="dish-sub" class="' + label + '">Texto corto en el menú</label>' +
+              '<input id="dish-sub" type="text" value="' + esc(p.sub) + '" placeholder="Ej. (5 piezas) · Mango / Fresa" class="' + input + '"></div>' +
+            '<div class="flex flex-col gap-gutter-xs"><label for="dish-desc" class="' + label + '">Descripción e ingredientes</label>' +
+              '<textarea id="dish-desc" rows="3" class="' + input + '">' + esc(p.desc) + '</textarea></div>' +
+
+            '<details class="rounded-md bg-light-surface-container-low border border-kintsugi-gold/70 p-gutter-md group">' +
+              '<summary class="cursor-pointer font-label text-label-lg text-ink-black flex items-center justify-between list-none">Etiquetas y opciones' +
+                '<span class="material-symbols-outlined text-smoke-gray group-open:rotate-180 transition-transform duration-state-change" aria-hidden="true">expand_more</span></summary>' +
+              '<div class="flex flex-col gap-gutter-md pt-gutter-md">' +
+                '<fieldset class="flex flex-col gap-gutter-xs"><legend class="' + label + ' mb-gutter-xs">Etiquetas</legend><div class="flex flex-wrap gap-gutter-xs">' +
+                  ETIQUETAS.map(function (t) {
+                    return '<label class="inline-flex items-center gap-1 px-gutter-sm py-gutter-xs rounded-full bg-washi border border-kintsugi-gold/60 font-label text-label-sm">' +
+                      '<input type="checkbox" class="tag w-4 h-4 rounded-sm text-primary border-kintsugi-gold focus:ring-primary" value="' + esc(t) + '"' + (p.etiquetas.indexOf(t) !== -1 ? ' checked' : '') + '>' + esc(t) + '</label>';
+                  }).join('') +
+                '</div></fieldset>' +
+                '<div class="flex flex-col gap-gutter-xs"><label for="opt-title" class="' + label + '">Opciones para elegir (ej. Sabor)</label>' +
+                  '<input id="opt-title" type="text" value="' + esc(p.opciones ? p.opciones.titulo : '') + '" placeholder="Título, ej. Sabor" class="' + input + '"></div>' +
+                '<div class="flex flex-col gap-gutter-xs"><label for="opt-values" class="' + label + '">Valores separados por coma</label>' +
+                  '<input id="opt-values" type="text" value="' + esc(p.opciones ? p.opciones.valores.join(', ') : '') + '" placeholder="Mango, Durazno, Fresa" class="' + input + '"></div>' +
+              '</div>' +
+            '</details>' +
+
+            '<label class="flex items-center justify-between p-gutter-md rounded-md bg-light-surface-container-low border border-kintsugi-gold/70">' +
+              '<div class="flex flex-col"><span class="font-label text-label-lg text-ink-black">Disponible en el menú</span>' +
+              '<span class="font-body text-body-sm text-smoke-gray">Apágalo si se agotó hoy</span></div>' +
+              '<input id="dish-on" type="checkbox"' + (p.disponible ? ' checked' : '') + ' class="w-5 h-5 rounded-sm text-primary border-kintsugi-gold focus:ring-primary">' +
+            '</label>' +
+
+            '<p id="form-error" class="hidden font-body text-body-sm text-error" role="alert"></p>' +
+
+            '<button type="submit" class="inline-flex items-center justify-center gap-gutter-sm w-full py-gutter-md px-gutter-xl rounded-full bg-primary text-on-primary border border-kintsugi-gold font-label text-label-lg mt-gutter-sm">' +
+              '<span class="material-symbols-outlined text-title-md" aria-hidden="true">save</span><span>' + (nuevo ? 'Agregar al menú' : 'Guardar cambios') + '</span></button>' +
+            (nuevo ? '' :
+              '<button type="button" id="borrar" class="inline-flex items-center justify-center gap-1 py-gutter-sm px-gutter-lg rounded-full bg-light-surface-container-low/90 border border-error/40 text-error font-label text-label-sm">' +
+                '<span class="material-symbols-outlined text-body-md" aria-hidden="true">delete</span><span>Eliminar platillo</span></button>') +
+          '</form>' +
+        '</main>';
+
+      function pintarFoto() {
+        document.getElementById('foto').innerHTML = U.thumb(p, 'w-20 h-20 text-display-lg-mobile', 'rounded-md');
+        document.getElementById('quitar-foto').classList.toggle('hidden', !p.img);
+      }
+
+      document.getElementById('cambiar-foto').addEventListener('click', function () {
+        U.pickImage(900).then(function (data) { p.img = data; pintarFoto(); });
+      });
+      document.getElementById('quitar-foto').addEventListener('click', function () { p.img = ''; pintarFoto(); });
+
+      document.getElementById('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var err = document.getElementById('form-error');
+        var nombre = document.getElementById('dish-name').value.trim();
+        var precio = document.getElementById('dish-price').value;
+        if (!nombre || precio === '' || Number(precio) < 0) {
+          err.textContent = !nombre ? 'Escribe el nombre del platillo.' : 'Escribe un precio válido.';
+          err.classList.remove('hidden');
+          document.getElementById(!nombre ? 'dish-name' : 'dish-price').focus();
+          return;
+        }
+        var titulo = document.getElementById('opt-title').value.trim();
+        var valores = document.getElementById('opt-values').value.split(',').map(function (v) { return v.trim(); }).filter(Boolean);
+
+        p.nombre = nombre;
+        p.jp = document.getElementById('dish-jp').value.trim();
+        p.precio = Number(precio);
+        p.cat = document.getElementById('dish-cat').value;
+        p.sub = document.getElementById('dish-sub').value.trim();
+        p.desc = document.getElementById('dish-desc').value.trim();
+        p.disponible = document.getElementById('dish-on').checked;
+        p.etiquetas = Array.prototype.map.call(document.querySelectorAll('.tag:checked'), function (c) { return c.value; });
+        p.opciones = valores.length ? { titulo: titulo || 'Opción', valores: valores } : null;
+
+        if (nuevo) {
+          p.id = S.uid(nombre, D.productos);
+          p.orden = D.productos.reduce(function (m, x) { return Math.max(m, x.orden || 0); }, 0) + 1;
+          D.productos.push(p);
+        } else {
+          Object.assign(original, p);
+        }
+        if (S.save()) location.href = 'platillos.html?cat=' + encodeURIComponent(p.cat);
+      });
+
+      var borrar = document.getElementById('borrar');
+      if (borrar) borrar.addEventListener('click', function () {
+        if (!confirm('¿Eliminar "' + original.nombre + '" del menú? Esta acción no se puede deshacer.')) return;
+        D.productos = D.productos.filter(function (x) { return x.id !== original.id; });
+        D.promos.forEach(function (pr) { pr.productos = pr.productos.filter(function (id) { return id !== original.id; }); });
+        if (S.save()) location.href = 'platillos.html';
+      });
+
+      pintarFoto();
+    })();
+  </script>
+</body>
+</html>
