@@ -336,6 +336,7 @@ export async function guardarNegocio(_prev: Estado, fd: FormData): Promise<Estad
       whatsapp: z.string().trim().max(20).regex(/^[\d\s+()-]*$/, 'El WhatsApp solo lleva números').default(''),
       facebook: urlOpcional,
       instagram: urlOpcional,
+      tiktok: urlOpcional,
       avisoMesero: texto(80),
     })
     .safeParse(Object.fromEntries(fd));

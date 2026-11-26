@@ -69,6 +69,7 @@ export async function getMenu() {
       whatsapp: n.whatsapp,
       facebook: n.facebook,
       instagram: n.instagram,
+      tiktok: n.tiktok,
       portada: n.portada,
       mascota: n.mascota,
       avisoMesero: n.avisoMesero,

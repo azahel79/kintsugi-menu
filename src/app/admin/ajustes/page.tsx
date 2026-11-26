@@ -40,6 +40,7 @@ const CAMPOS: [keyof Negocio, string, string, string][] = [
   ['avisoMesero', 'Aviso en cada platillo', 'text', 'Pídelo a tu mesero'],
   ['facebook', 'Facebook (enlace)', 'url', 'https://facebook.com/…'],
   ['instagram', 'Instagram (enlace)', 'url', 'https://instagram.com/…'],
+  ['tiktok', 'TikTok (enlace)', 'url', 'https://www.tiktok.com/@…'],
 ];
 type Negocio = NonNullable<Awaited<ReturnType<typeof adminNegocio>>['negocio']>;
 

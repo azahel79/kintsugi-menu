@@ -26,6 +26,7 @@ export const negocio = pgTable('negocio', {
   whatsapp: text('whatsapp').notNull().default(''),
   facebook: text('facebook').notNull().default(''),
   instagram: text('instagram').notNull().default(''),
+  tiktok: text('tiktok').notNull().default(''),
   /** Imagen de la portada (bienvenida). */
   portada: text('portada'),
   /** Mascota pequeña (pie de página, login, panel). */

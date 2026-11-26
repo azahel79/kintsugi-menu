@@ -133,6 +133,7 @@ async function main() {
       whatsapp: '228 123 4567',
       facebook: 'https://facebook.com/',
       instagram: 'https://instagram.com/',
+      tiktok: 'https://www.tiktok.com/@kintsugi_restaurante',
       portada: '/img/panda.jpg',
       mascota: '/img/panda.jpg',
       avisoMesero: 'Pídelo a tu mesero',

@@ -1,0 +1,1 @@
+ALTER TABLE "negocio" ADD COLUMN "tiktok" text DEFAULT '' NOT NULL;
