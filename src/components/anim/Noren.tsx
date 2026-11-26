@@ -34,12 +34,12 @@ export function Noren() {
           onAnimationEnd={lado === 1 ? () => setAbiertaPara(seccion) : undefined}
           className={`relative h-full w-1/2 bg-noren border-x border-black/20 origin-top will-change-transform ${lado === -1 ? 'animate-noren-izq' : 'animate-noren-der'}`}
         >
-          {/* El nombre del negocio en japonés (金継ぎ), en columna y partido entre las dos telas */}
+          {/* El nombre del negocio en japonés (金継ぎ), en horizontal y partido entre las dos telas */}
           <span
-            className={`absolute top-1/2 -translate-y-1/2 flex flex-col items-center font-brush text-[64px] leading-[1.05] text-washi/95 ${lado === -1 ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'}`}
-            style={{ clipPath: lado === -1 ? 'inset(0 50% 0 0)' : 'inset(0 0 0 50%)' }}
+            className={`absolute top-[40vh] font-brush text-[56px] leading-none whitespace-nowrap text-washi/95 [text-shadow:0_3px_10px_rgba(0,0,0,.35)] ${lado === -1 ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'}`}
+            style={{ clipPath: lado === -1 ? 'inset(-20% 50% -20% -10%)' : 'inset(-20% -10% -20% 50%)' }}
           >
-            {['金', '継', 'ぎ'].map((c) => <span key={c}>{c}</span>)}
+            金継ぎ
           </span>
           <span className="absolute bottom-0 inset-x-0 h-3 bg-black/25" />
         </div>

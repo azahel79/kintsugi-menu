@@ -30,9 +30,9 @@ export function MenuHeader({ menu, activa }: { menu: Menu; activa: string }) {
       <div className="flex items-center justify-between gap-gutter-sm border-b border-kintsugi-gold/25 pb-gutter-xs">
         <LogoCompacto>
           <Link href="/" className="flex items-center gap-gutter-xs" aria-label="Kintsugi, volver a la portada">
-            {/* Sello hanko con el nombre en japonés: 金継ぎ (kintsugi), en columna */}
-            <span lang="ja" className="flex flex-col items-center px-1 py-1 rounded-sm bg-primary text-on-primary border border-kintsugi-gold/70 font-brush text-[13px] leading-[1.05] shadow-[0_2px_6px_rgba(0,0,0,.4)]" aria-label="金継ぎ">
-              {['金', '継', 'ぎ'].map((c) => <span key={c} aria-hidden="true">{c}</span>)}
+            {/* Sello con el nombre en japonés: 金継ぎ (kintsugi) */}
+            <span lang="ja" className="px-1.5 py-0.5 rounded-sm bg-primary text-on-primary border border-kintsugi-gold/70 font-brush text-body-md leading-tight whitespace-nowrap shadow-[0_2px_6px_rgba(0,0,0,.4)]">
+              金継ぎ
             </span>
             <LetrasCaen texto="KINTSUGI" cuando="carga" delay={0.15} className="font-display text-headline-lg text-primary leading-none tracking-wide uppercase [paint-order:stroke_fill] [-webkit-text-stroke:3px_#F2EEE6]" />
           </Link>

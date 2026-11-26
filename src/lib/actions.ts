@@ -11,7 +11,8 @@ import { cerrarSesion, crearSesion, requireAdmin } from '@/lib/session';
 
 export type Estado = { ok?: boolean; error?: string; mensaje?: string } | null;
 
-const MAX_IMG = 2.5 * 1024 * 1024;
+// Las fotos llegan ya reducidas desde el navegador (~1 MB); 4 MB es el margen bajo el límite de Vercel (4.5 MB).
+const MAX_IMG = 4 * 1024 * 1024;
 const TIPOS_IMG = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
 // Hash de relleno: si el correo no existe se compara igual, para no revelar qué correos son válidos.
 const HASH_RELLENO = bcrypt.hashSync('kintsugi-relleno', 10);
@@ -116,7 +117,7 @@ export async function subirImagen(fd: FormData): Promise<{ url?: string; error?:
   const f = fd.get('archivo');
   if (!(f instanceof File) || f.size === 0) return { error: 'No se recibió la imagen.' };
   if (!TIPOS_IMG.includes(f.type)) return { error: 'Formato no permitido (usa JPG, PNG o WebP).' };
-  if (f.size > MAX_IMG) return { error: 'La imagen pesa demasiado (máx. 2.5 MB).' };
+  if (f.size > MAX_IMG) return { error: 'La imagen pesa demasiado (máx. 4 MB).' };
 
   const data = Buffer.from(await f.arrayBuffer()).toString('base64');
   const [img] = await db.insert(s.imagenes).values({ mime: f.type, bytes: f.size, data }).returning({ id: s.imagenes.id });

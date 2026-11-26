@@ -4,24 +4,57 @@ import Image from 'next/image';
 import { useRef, useState, useTransition } from 'react';
 import { subirImagen } from '@/lib/actions';
 
-/** Reduce la foto en el navegador (máx. `maxLado` px, WebP) antes de subirla. */
+/** Meta de peso por foto: ligera para el celular y siempre bajo el límite de Vercel (4.5 MB). */
+const PESO_META = 900 * 1024;
+
+/** Abre la imagen con lo que soporte el navegador (createImageBitmap o <img> en Safari viejo). */
+async function abrir(file: File): Promise<{ img: CanvasImageSource; w: number; h: number; cerrar: () => void }> {
+  try {
+    const bmp = await createImageBitmap(file);
+    return { img: bmp, w: bmp.width, h: bmp.height, cerrar: () => bmp.close() };
+  } catch {
+    const url = URL.createObjectURL(file);
+    const img = new window.Image();
+    img.src = url;
+    await img.decode();
+    return { img, w: img.naturalWidth, h: img.naturalHeight, cerrar: () => URL.revokeObjectURL(url) };
+  }
+}
+
+/**
+ * Reduce la foto en el navegador antes de subirla.
+ * Usa JPEG: Safari de iPhone no genera WebP desde canvas (devolvía PNG de varios MB).
+ * Si aun así pesa mucho, baja la calidad y luego el tamaño hasta quedar ligera.
+ */
 async function reducir(file: File, maxLado: number): Promise<File> {
-  const bmp = await createImageBitmap(file);
-  const escala = Math.min(1, maxLado / Math.max(bmp.width, bmp.height));
-  const w = Math.round(bmp.width * escala);
-  const h = Math.round(bmp.height * escala);
-  const canvas = document.createElement('canvas');
-  canvas.width = w;
-  canvas.height = h;
-  canvas.getContext('2d')!.drawImage(bmp, 0, 0, w, h);
-  bmp.close();
-  const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/webp', 0.82));
-  if (!blob) throw new Error('No se pudo procesar la imagen');
-  return new File([blob], 'foto.webp', { type: 'image/webp' });
+  const { img, w: ow, h: oh, cerrar } = await abrir(file);
+  try {
+    let lado = maxLado;
+    for (let intento = 0; intento < 6; intento++) {
+      const escala = Math.min(1, lado / Math.max(ow, oh));
+      const w = Math.round(ow * escala);
+      const h = Math.round(oh * escala);
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d')!;
+      ctx.fillStyle = '#ffffff'; // PNG con transparencia: fondo blanco en lugar de negro
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+      for (const calidad of [0.82, 0.72, 0.6]) {
+        const blob = await new Promise<Blob | null>((r) => canvas.toBlob(r, 'image/jpeg', calidad));
+        if (blob && blob.size <= PESO_META) return new File([blob], 'foto.jpg', { type: 'image/jpeg' });
+      }
+      lado = Math.round(lado * 0.8);
+    }
+    throw new Error('No se pudo reducir la imagen. Prueba con otra foto.');
+  } finally {
+    cerrar();
+  }
 }
 
 export async function subirFoto(file: File, maxLado = 1400) {
-  if (!file.type.startsWith('image/')) throw new Error('Elige una imagen (JPG, PNG o WebP).');
+  if (file.type && !file.type.startsWith('image/')) throw new Error('Elige una imagen (foto JPG, PNG, WebP o HEIC).');
   const fd = new FormData();
   fd.append('archivo', await reducir(file, maxLado));
   const r = await subirImagen(fd);

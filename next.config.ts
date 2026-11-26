@@ -16,8 +16,9 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 2678400,
   },
   experimental: {
-    // Las fotos se reducen en el navegador antes de subirse; 4 MB deja margen.
-    serverActions: { bodySizeLimit: "4mb" },
+    // Las fotos se reducen en el navegador antes de subirse. Vercel no acepta peticiones
+    // de más de 4.5 MB, así que no tiene caso subir este límite más.
+    serverActions: { bodySizeLimit: "4.5mb" },
     // En este equipo la caché en disco de Turbopack dejaba CSS viejo (cambios de
     // globals.css que no aparecían ni reiniciando). Se desactiva solo en desarrollo.
     turbopackFileSystemCacheForDev: false,
