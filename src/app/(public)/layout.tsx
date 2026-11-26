@@ -6,7 +6,7 @@ export default function PublicLayout({ children }: LayoutProps<'/'>) {
     <>
       {children}
       <div aria-hidden="true" className="fixed inset-0 z-20 max-w-md mx-auto pointer-events-none">
-        <SakuraPetals cantidad={8} className="w-full h-full" />
+        <SakuraPetals cantidad={16} className="w-full h-full" />
       </div>
     </>
   );

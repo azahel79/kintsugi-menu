@@ -140,7 +140,7 @@ function Vertical({ cat, filas }: { cat: Categoria; filas: number }) {
 function GuiaSushi({ sushi }: { sushi: Menu['sushi'] }) {
   const mitad = Math.ceil(sushi.ingredientes.length / 2);
   return (
-    <div className="border-t border-ink-black/25 pt-gutter-sm flex flex-col gap-gutter-md">
+    <div className="border-b border-ink-black/25 pb-gutter-md flex flex-col gap-gutter-md">
       <div className="flex items-center justify-center gap-gutter-sm">
         <span className="font-brush text-headline-md text-primary" aria-hidden="true">寿司</span>
         <LetrasCaen as="h3" texto="Arma tu sushi" className="font-headline text-title-md text-ink-black uppercase" />
@@ -164,7 +164,7 @@ function GuiaSushi({ sushi }: { sushi: Menu['sushi'] }) {
       >
         {sushi.ingredientes.map((i) => (
           <li key={i.id} className="flex items-center gap-1">
-            <span className="material-symbols-outlined text-body-md text-secondary" aria-hidden="true">{i.icono}</span>
+            <span className="material-symbols-outlined text-body-md text-primary" aria-hidden="true">{i.icono}</span>
             {i.nombre}
           </li>
         ))}
@@ -204,10 +204,11 @@ export function CategoriaCard({ cat, menu, indice }: { cat: Categoria; menu: Men
       ) : (
         <h2 className="sr-only">{cat.nombre}</h2>
       )}
+      {/* La guía "Arma tu sushi" va primero y los rollos debajo */}
+      {cat.armable && <GuiaSushi sushi={menu.sushi} />}
       <div className="flex items-stretch gap-gutter-sm">
         {cat.lado === 'izq' ? <><Vertical cat={cat} filas={items.length} />{lista}</> : <>{lista}<Vertical cat={cat} filas={items.length} /></>}
       </div>
-      {cat.armable && <GuiaSushi sushi={menu.sushi} />}
     </Makimono>
   );
 }
