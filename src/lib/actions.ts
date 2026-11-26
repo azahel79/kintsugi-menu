@@ -368,6 +368,17 @@ export async function guardarImagenNegocio(destino: string, url: string | null) 
   refrescarMenu();
 }
 
+/** Renumera el orden de las categorías: pestaña por pestaña, sin huecos (0, 1, 2…). */
+async function compactarCategorias() {
+  const [secciones, cats] = await Promise.all([
+    db.select({ id: s.secciones.id, orden: s.secciones.orden }).from(s.secciones),
+    db.select({ id: s.categorias.id, seccionId: s.categorias.seccionId, orden: s.categorias.orden }).from(s.categorias),
+  ]);
+  const ordenSec = new Map(secciones.map((x) => [x.id, x.orden]));
+  cats.sort((a, b) => (ordenSec.get(a.seccionId) ?? 99) - (ordenSec.get(b.seccionId) ?? 99) || a.orden - b.orden);
+  for (const [i, c] of cats.entries()) if (c.orden !== i) await db.update(s.categorias).set({ orden: i }).where(eq(s.categorias.id, c.id));
+}
+
 export async function guardarCategorias(_prev: Estado, fd: FormData): Promise<Estado> {
   await requireAdmin();
   const ids = fd.getAll('id').map(String);
@@ -381,9 +392,16 @@ export async function guardarCategorias(_prev: Estado, fd: FormData): Promise<Es
   for (const [i, id] of ids.entries()) {
     const d = cat.safeParse({ nombre: fd.getAll('nombre')[i], nota: fd.getAll('nota')[i], vertical: fd.getAll('vertical')[i], kanji: fd.getAll('kanji')[i] });
     if (!d.success) return { error: primerError(d.error) };
+    const seccion = String(fd.get(`seccion:${id}`) ?? '');
     await db
       .update(s.categorias)
-      .set({ ...d.data, kanji: d.data.kanji || '品', visible: fd.get(`visible:${id}`) === 'on' })
+      .set({
+        ...d.data,
+        kanji: d.data.kanji || '品',
+        visible: fd.get(`visible:${id}`) === 'on',
+        mostrarTitulo: fd.get(`titulo:${id}`) === 'on',
+        ...(secs.includes(seccion) ? { seccionId: seccion } : {}),
+      })
       .where(eq(s.categorias.id, id));
   }
   // Nombres de las secciones (pestañas).
@@ -392,6 +410,71 @@ export async function guardarCategorias(_prev: Estado, fd: FormData): Promise<Es
     const jp = String(fd.getAll('seccionJp')[i] ?? '').trim().slice(0, 12);
     if (nombre) await db.update(s.secciones).set({ nombre, jp }).where(eq(s.secciones.id, id));
   }
+  await compactarCategorias();
   refrescarMenu();
   return { ok: true, mensaje: 'Categorías guardadas' };
+}
+
+export async function crearCategoria(_prev: Estado, fd: FormData): Promise<Estado> {
+  await requireAdmin();
+  const d = z
+    .object({
+      nombre: z.string().trim().min(1, 'Escribe el nombre de la categoría').max(40),
+      seccionId: z.string().min(1, 'Elige en qué pestaña va'),
+    })
+    .safeParse({ nombre: fd.get('nombre'), seccionId: fd.get('seccionId') });
+  if (!d.success) return { error: primerError(d.error) };
+  const [sec] = await db.select({ id: s.secciones.id }).from(s.secciones).where(eq(s.secciones.id, d.data.seccionId)).limit(1);
+  if (!sec) return { error: 'Esa pestaña ya no existe.' };
+
+  const id = await idUnico(d.data.nombre, async (x) => (await db.select({ id: s.categorias.id }).from(s.categorias).where(eq(s.categorias.id, x))).length > 0);
+  const hermanas = await db.select({ id: s.categorias.id }).from(s.categorias).where(eq(s.categorias.seccionId, sec.id));
+  const [{ m }] = await db.select({ m: max(s.categorias.orden) }).from(s.categorias);
+  await db.insert(s.categorias).values({
+    id,
+    seccionId: sec.id,
+    nombre: d.data.nombre,
+    mostrarTitulo: true,
+    estilo: 'lista',
+    subMayus: false,
+    vertical: '',
+    // Alterna el lado del texto vertical respecto a la tarjeta anterior.
+    lado: hermanas.length % 2 ? 'izq' : 'der',
+    kanji: '品',
+    nota: '',
+    orden: (m ?? 0) + 1,
+  });
+  await compactarCategorias();
+  refrescarMenu();
+  return { ok: true, mensaje: 'Categoría creada: ya puedes asignarle platillos' };
+}
+
+export async function eliminarCategoria(id: string): Promise<{ error?: string }> {
+  await requireAdmin();
+  const [{ n }] = await db.select({ n: sql<number>`count(*)::int` }).from(s.productos).where(eq(s.productos.categoriaId, id));
+  if (n > 0) return { error: `Esta categoría tiene ${n} platillo${n > 1 ? 's' : ''}. Muévelos a otra categoría o elimínalos primero.` };
+  await db.delete(s.categorias).where(eq(s.categorias.id, id));
+  await compactarCategorias();
+  refrescarMenu();
+  return {};
+}
+
+/** Sube o baja una categoría dentro de su pestaña (conserva los demás lugares). */
+export async function moverCategoria(id: string, dir: -1 | 1) {
+  await requireAdmin();
+  const [c] = await db.select().from(s.categorias).where(eq(s.categorias.id, id)).limit(1);
+  if (!c) return;
+  const hermanas = await db
+    .select({ id: s.categorias.id, orden: s.categorias.orden })
+    .from(s.categorias)
+    .where(eq(s.categorias.seccionId, c.seccionId))
+    .orderBy(s.categorias.orden);
+  const i = hermanas.findIndex((h) => h.id === id);
+  const j = i + dir;
+  if (j < 0 || j >= hermanas.length) return;
+  const lugares = hermanas.map((h) => h.orden);
+  [hermanas[i], hermanas[j]] = [hermanas[j], hermanas[i]];
+  for (const [k, h] of hermanas.entries()) await db.update(s.categorias).set({ orden: lugares[k] }).where(eq(s.categorias.id, h.id));
+  await compactarCategorias();
+  refrescarMenu();
 }

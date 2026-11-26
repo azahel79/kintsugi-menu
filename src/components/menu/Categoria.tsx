@@ -115,14 +115,21 @@ function Fila({ p, cat, ultima }: { p: MenuProducto; cat: Categoria; ultima: boo
   );
 }
 
-function Vertical({ cat }: { cat: Categoria }) {
+/**
+ * Texto vertical decorativo. El tamaño depende de cuántos caracteres tiene y de qué
+ * tan alta es la tarjeta (cuántos platillos), para que nunca se salga de ella.
+ */
+function Vertical({ cat, filas }: { cat: Categoria; filas: number }) {
   if (!cat.vertical) return null;
   const len = Array.from(cat.vertical).length;
-  const size = len <= 5 ? 'text-headline-lg' : len <= 7 ? 'text-headline-md' : 'text-title-md';
+  // Alto aproximado disponible: ~56 px por platillo.
+  const alto = filas * 56;
+  const porLetra = alto / len;
+  const size = porLetra >= 34 && len <= 5 ? 'text-headline-lg' : porLetra >= 27 ? 'text-headline-md' : porLetra >= 22 ? 'text-title-md' : 'text-body-md';
   const lado = cat.lado === 'izq' ? 'pr-gutter-xs border-r' : 'pl-gutter-xs border-l';
   return (
-    <div className={`flex flex-col items-center justify-center shrink-0 ${lado} border-ink-black/20`}>
-      <FlotarVertical>
+    <div className={`flex flex-col items-center justify-center shrink-0 overflow-hidden ${lado} border-ink-black/20`}>
+      <FlotarVertical rango={filas <= 3 ? 6 : 28}>
         <TextoVertical texto={cat.vertical} className={`${size} text-ink-black font-bold`} />
       </FlotarVertical>
     </div>
@@ -198,7 +205,7 @@ export function CategoriaCard({ cat, menu, indice }: { cat: Categoria; menu: Men
         <h2 className="sr-only">{cat.nombre}</h2>
       )}
       <div className="flex items-stretch gap-gutter-sm">
-        {cat.lado === 'izq' ? <><Vertical cat={cat} />{lista}</> : <>{lista}<Vertical cat={cat} /></>}
+        {cat.lado === 'izq' ? <><Vertical cat={cat} filas={items.length} />{lista}</> : <>{lista}<Vertical cat={cat} filas={items.length} /></>}
       </div>
       {cat.armable && <GuiaSushi sushi={menu.sushi} />}
     </Makimono>

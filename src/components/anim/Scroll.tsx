@@ -58,11 +58,11 @@ export function FarolViento({ children, sentido = 1 }: { children: ReactNode; se
 }
 
 /** El texto vertical de cada tarjeta flota un poco a contracorriente del scroll. */
-export function FlotarVertical({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function FlotarVertical({ children, className = '', rango = 28 }: { children: ReactNode; className?: string; rango?: number }) {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const y = useTransform(scrollYProgress, [0, 1], [28, -28]);
+  const y = useTransform(scrollYProgress, [0, 1], [rango, -rango]);
   return (
     <m.div ref={ref} className={className} style={reduce ? undefined : { y }}>
       {children}
