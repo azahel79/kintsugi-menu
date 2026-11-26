@@ -122,7 +122,7 @@ export function FondoSeccion({ src }: { src: string | null }) {
     <div aria-hidden="true" className="absolute inset-0 pointer-events-none">
       <div className="sticky top-0 h-dvh overflow-hidden">
         <FondoParallax>
-          {src ? <Image src={src} alt="" fill sizes="(max-width: 448px) 100vw, 448px" quality={85} className="object-cover" /> : <div className="absolute inset-0 bg-sumi" />}
+          {src ? <Image src={src} alt="" fill priority fetchPriority="high" sizes="(max-width: 448px) 100vw, 448px" quality={75} className="object-cover" /> : <div className="absolute inset-0 bg-sumi" />}
         </FondoParallax>
       </div>
     </div>

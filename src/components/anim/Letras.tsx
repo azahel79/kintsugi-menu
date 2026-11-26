@@ -1,8 +1,8 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { m } from 'motion/react';
 
-const ETIQUETAS = { span: motion.span, p: motion.p, h1: motion.h1, h2: motion.h2, h3: motion.h3 } as const;
+const ETIQUETAS = { span: m.span, p: m.p, h1: m.h1, h2: m.h2, h3: m.h3 } as const;
 type Etiqueta = keyof typeof ETIQUETAS;
 
 type Props = {
@@ -33,7 +33,7 @@ export function LetrasCaen({ texto, className = '', as = 'span', cuando = 'vista
       {texto.split(' ').map((palabra, w, todas) => (
         <span key={w} aria-hidden="true" className="inline-block whitespace-nowrap">
           {Array.from(palabra).map((c, i) => (
-            <motion.span
+            <m.span
               key={i}
               className="inline-block"
               variants={{
@@ -42,7 +42,7 @@ export function LetrasCaen({ texto, className = '', as = 'span', cuando = 'vista
               }}
             >
               {c}
-            </motion.span>
+            </m.span>
           ))}
           {w < todas.length - 1 && <span className="inline-block w-[0.3em]" />}
         </span>
@@ -65,14 +65,14 @@ export function PalabrasTinta({ texto, className = '', as = 'p', delay = 0.2 }: 
     >
       <span className="sr-only">{texto}</span>
       {palabras.map((p, i) => (
-        <motion.span
+        <m.span
           key={i}
           aria-hidden="true"
           className="inline-block mr-[0.28em]"
           variants={{ oculto: { opacity: 0, filter: 'blur(5px)', y: 4 }, visible: { opacity: 1, filter: 'blur(0px)', y: 0, transition: { duration: 0.45 } } }}
         >
           {p}
-        </motion.span>
+        </m.span>
       ))}
     </Comp>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from 'motion/react';
+import { m, useReducedMotion, useScroll, useSpring, useTransform, useVelocity } from 'motion/react';
 import { useRef, type ReactNode } from 'react';
 
 /** Hilo de oro bajo el encabezado que se "repara" conforme bajas por el menú. */
@@ -8,7 +8,7 @@ export function ProgresoOro() {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 26, mass: 0.4 });
   return (
-    <motion.span
+    <m.span
       aria-hidden="true"
       className="absolute left-0 right-0 -bottom-[2px] h-[3px] origin-left rounded-full bg-linear-to-r from-[#9c7a16] via-gold-light to-kintsugi-gold shadow-[0_0_8px_rgba(232,199,102,.7)]"
       style={{ scaleX }}
@@ -22,9 +22,9 @@ export function FondoParallax({ children }: { children: ReactNode }) {
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], ['-6%', '6%']);
   return (
-    <motion.div aria-hidden="true" className="absolute inset-x-0 -top-[8%] h-[116%] pointer-events-none" style={reduce ? undefined : { y }}>
+    <m.div aria-hidden="true" className="absolute inset-x-0 -top-[8%] h-[116%] pointer-events-none" style={reduce ? undefined : { y }}>
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -34,9 +34,9 @@ export function LogoCompacto({ children }: { children: ReactNode }) {
   const { scrollY } = useScroll();
   const scale = useTransform(scrollY, [0, 140], [1, 0.84]);
   return (
-    <motion.div className="origin-left" style={reduce ? undefined : { scale }}>
+    <m.div className="origin-left" style={reduce ? undefined : { scale }}>
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -51,9 +51,9 @@ export function FarolViento({ children, sentido = 1 }: { children: ReactNode; se
     mass: 0.6,
   });
   return (
-    <motion.span className="inline-block origin-top" style={reduce ? undefined : { rotate }}>
+    <m.span className="inline-block origin-top" style={reduce ? undefined : { rotate }}>
       {children}
-    </motion.span>
+    </m.span>
   );
 }
 
@@ -64,9 +64,9 @@ export function FlotarVertical({ children, className = '' }: { children: ReactNo
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y = useTransform(scrollYProgress, [0, 1], [28, -28]);
   return (
-    <motion.div ref={ref} className={className} style={reduce ? undefined : { y }}>
+    <m.div ref={ref} className={className} style={reduce ? undefined : { y }}>
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -78,9 +78,9 @@ export function ZoomScroll({ children, className = '' }: { children: ReactNode; 
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.12, 1, 1.12]);
   return (
     <div ref={ref} className={`overflow-hidden ${className}`}>
-      <motion.div className="w-full h-full" style={reduce ? undefined : { scale }}>
+      <m.div className="w-full h-full" style={reduce ? undefined : { scale }}>
         {children}
-      </motion.div>
+      </m.div>
     </div>
   );
 }

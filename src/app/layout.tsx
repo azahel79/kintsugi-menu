@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { MotionProvider } from "@/components/anim/MotionProvider";
-import { MATERIAL_SYMBOLS_URL } from "@/lib/icons";
 import "./globals.css";
 
 // Fuentes latinas guardadas en el proyecto: el build no depende de internet.
@@ -14,13 +13,15 @@ const arvo = localFont({
   variable: "--font-arvo",
   display: "swap",
 });
-const caveat = localFont({ src: "../fonts/caveat-700.woff2", variable: "--font-caveat", weight: "700", display: "swap" });
+// Caveat solo se usa en precios: recortada a cifras y signos (~3 KB).
+const caveat = localFont({ src: "../fonts/caveat-700-precios.woff2", variable: "--font-caveat", weight: "700", display: "swap" });
 const jakarta = localFont({ src: "../fonts/jakarta-400-700.woff2", variable: "--font-jakarta", weight: "400 700", display: "swap" });
 
-// Fuentes japonesas (Noto Sans JP y Yuji Syuku de pincel): Google las parte por
-// rangos de caracteres y el navegador solo descarga los kanji que aparecen.
-const JP_FONTS_URL =
-  "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Yuji+Syuku&display=swap";
+// Pincel japonés (Yuji Syuku) recortado a los caracteres que usa el diseño: ~14 KB.
+// El texto japonés normal usa las fuentes del sistema (iPhone, Android y Windows ya las traen).
+const yuji = localFont({ src: "../fonts/yuji-syuku-pincel.woff2", variable: "--font-yuji", weight: "400", display: "swap" });
+// Íconos Material Symbols: solo los de src/lib/icons.ts (~10 KB), sin depender de Google.
+const iconos = localFont({ src: "../fonts/material-symbols-subset.woff2", variable: "--font-iconos", weight: "400", display: "block", preload: true });
 
 // Dominio público: lo usa WhatsApp/Facebook para encontrar la imagen de vista previa.
 // En Vercel se toma solo el dominio de producción; NEXT_PUBLIC_SITE_URL permite fijar uno propio.
@@ -60,14 +61,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${marker.variable} ${arvo.variable} ${caveat.variable} ${jakarta.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="stylesheet" href={JP_FONTS_URL} />
-        {/* Íconos Material Symbols, solo los que usa el proyecto (ver src/lib/icons.ts). */}
-        <link rel="stylesheet" href={MATERIAL_SYMBOLS_URL} />
-      </head>
+    <html lang="es" className={`${marker.variable} ${arvo.variable} ${caveat.variable} ${jakarta.variable} ${yuji.variable} ${iconos.variable}`}>
       <body className="bg-dark-surface text-ink-black font-body antialiased">
         <MotionProvider>{children}</MotionProvider>
       </body>

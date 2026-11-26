@@ -44,7 +44,7 @@ function Fila({ p, cat, ultima }: { p: MenuProducto; cat: Categoria; ultima: boo
 
   if (cat.estilo === 'ramen' && p.etiquetas.includes('Especialidad')) {
     return (
-      <Link href={href} className={`${base} items-start`}>
+      <Link href={href} prefetch={false} className={`${base} items-start`}>
         <div className="flex flex-col gap-gutter-xs min-w-0">
           <div className="flex items-baseline gap-gutter-xs flex-wrap">
             <JpChico jp={p.jp} />
@@ -64,7 +64,7 @@ function Fila({ p, cat, ultima }: { p: MenuProducto; cat: Categoria; ultima: boo
 
   if (cat.estilo === 'ramen') {
     return (
-      <Link href={href} className={`${base} items-center`}>
+      <Link href={href} prefetch={false} className={`${base} items-center`}>
         {p.sub ? (
           <div className="flex flex-col min-w-0">
             <div className="flex items-baseline gap-gutter-xs"><JpChico jp={p.jp} />{nombre}</div>
@@ -84,7 +84,7 @@ function Fila({ p, cat, ultima }: { p: MenuProducto; cat: Categoria; ultima: boo
 
   if (cat.estilo === 'sushi') {
     return (
-      <Link href={href} className={`${base} items-center`}>
+      <Link href={href} prefetch={false} className={`${base} items-center`}>
         <div className="flex flex-col min-w-0">
           <h3 className="font-headline text-title-md text-ink-black uppercase">
             {p.nombre} {p.jp && <TintaSeca className="font-jp text-body-sm text-smoke-gray font-normal">{p.jp}</TintaSeca>}
@@ -101,7 +101,7 @@ function Fila({ p, cat, ultima }: { p: MenuProducto; cat: Categoria; ultima: boo
   }
 
   return (
-    <Link href={href} className={`${base} items-center`}>
+    <Link href={href} prefetch={false} className={`${base} items-center`}>
       <div className="flex flex-col min-w-0">
         {nombre}
         {p.sub && <p className={`font-body text-body-sm text-smoke-gray ${cat.subMayus ? 'uppercase' : ''}`}>{p.sub}</p>}

@@ -9,8 +9,11 @@ const nextConfig: NextConfig = {
       { pathname: "/img/**", search: "" },
       { pathname: "/media/**", search: "" },
     ],
-    formats: ["image/avif", "image/webp"],
+    // WebP: se genera rápido la primera vez (AVIF tarda mucho más en el primer acceso).
+    formats: ["image/webp"],
     qualities: [75, 85],
+    // Las imágenes optimizadas se guardan 31 días (cada foto nueva del panel tiene otra URL).
+    minimumCacheTTL: 2678400,
   },
   experimental: {
     // Las fotos se reducen en el navegador antes de subirse; 4 MB deja margen.

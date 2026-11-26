@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'motion/react';
+import { m, useReducedMotion } from 'motion/react';
 import { Children, type ReactNode } from 'react';
 
 /* Grietas doradas: varias formas para que no todas las tarjetas se vean igual. */
@@ -23,7 +23,7 @@ export function GrietaDorada({ variante = 0, className = '', delay = 0 }: { vari
           <stop offset="1" stopColor="#9c7a16" />
         </linearGradient>
       </defs>
-      <motion.path
+      <m.path
         d={d}
         fill="none"
         stroke={`url(#oro-${variante})`}
@@ -52,19 +52,19 @@ const pergamino = {
  */
 export function Makimono({ children, className = '', delay = 0, as = 'section', id }: { children: ReactNode; className?: string; delay?: number; as?: 'section' | 'div'; id?: string }) {
   const reduce = useReducedMotion();
-  const Comp = as === 'div' ? motion.div : motion.section;
+  const Comp = as === 'div' ? m.div : m.section;
   return (
-    <motion.div
+    <m.div
       className="relative z-10 scroll-mt-32"
       id={id}
       initial={reduce ? false : 'cerrado'}
       whileInView="abierto"
       viewport={{ once: true, amount: 0.05 }}
     >
-      <Comp className={className} variants={pergamino} transition={{ duration: 0.75, delay, ease: [0.2, 0, 0, 1] }}>
+      <Comp className={className} variants={pergamino} transition={{ duration: 0.55, delay, ease: [0.2, 0, 0, 1] }}>
         {children}
       </Comp>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -76,8 +76,8 @@ const easeBrush = [0.65, 0, 0.35, 1] as const;
  */
 export function TituloPincel({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <motion.div className="relative inline-block" initial="oculto" whileInView="visible" viewport={{ once: true, amount: 0.6 }}>
-      <motion.svg
+    <m.div className="relative inline-block" initial="oculto" whileInView="visible" viewport={{ once: true, amount: 0.6 }}>
+      <m.svg
         viewBox="0 0 200 60"
         aria-hidden="true"
         className="absolute left-1/2 top-1/2 w-[135%] h-[170%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
@@ -91,66 +91,66 @@ export function TituloPincel({ children, className = '' }: { children: ReactNode
         />
         <circle cx="186" cy="16" r="3.2" fill="#141414" fillOpacity=".1" />
         <circle cx="10" cy="48" r="2.2" fill="#141414" fillOpacity=".1" />
-      </motion.svg>
-      <motion.h2
+      </m.svg>
+      <m.h2
         className={`relative ${className}`}
         variants={{ oculto: { clipPath: 'inset(-25% 100% -25% -5%)' }, visible: { clipPath: 'inset(-25% -5% -25% -5%)' } }}
-        transition={{ duration: 0.8, delay: 0.15, ease: easeBrush }}
+        transition={{ duration: 0.6, delay: 0.1, ease: easeBrush }}
       >
         {children}
-      </motion.h2>
-    </motion.div>
+      </m.h2>
+    </m.div>
   );
 }
 
 /** Los renglones de una carta aparecen en cascada, como si se fueran escribiendo. */
 export function ListaCascada({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <motion.div
+    <m.div
       className={className}
       initial="oculto"
       whileInView="visible"
       viewport={{ once: true, amount: 0.01 }}
-      variants={{ oculto: {}, visible: { transition: { staggerChildren: 0.04, delayChildren: 0.1 } } }}
+      variants={{ oculto: {}, visible: { transition: { staggerChildren: 0.03, delayChildren: 0.05 } } }}
     >
       {Children.map(children, (hijo) =>
         hijo ? (
-          <motion.div
+          <m.div
             variants={{ oculto: { opacity: 0, y: 10, filter: 'blur(4px)' }, visible: { opacity: 1, y: 0, filter: 'blur(0px)' } }}
             transition={{ duration: 0.45, ease: [0.2, 0, 0, 1] }}
           >
             {hijo}
-          </motion.div>
+          </m.div>
         ) : null,
       )}
-    </motion.div>
+    </m.div>
   );
 }
 
 /** Kanji pequeño que pasa de borroso a nítido, como tinta que se seca. */
 export function TintaSeca({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <motion.span
+    <m.span
       aria-hidden="true"
       className={className}
       variants={{ oculto: { opacity: 0, filter: 'blur(6px)' }, visible: { opacity: 1, filter: 'blur(0px)' } }}
-      transition={{ duration: 0.7, delay: 0.18, ease: 'easeOut' }}
+      transition={{ duration: 0.5, delay: 0.12, ease: 'easeOut' }}
     >
       {children}
-    </motion.span>
+    </m.span>
   );
 }
 
 /** Precio que cae como un pequeño sello al final del renglón. */
 export function PrecioSello({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <motion.span
+    <m.span
       className={`inline-block ${className}`}
       variants={{ oculto: { opacity: 0, scale: 1.3, rotate: -6 }, visible: { opacity: 1, scale: 1, rotate: 0 } }}
-      transition={{ type: 'spring', stiffness: 480, damping: 20, delay: 0.22 }}
+      transition={{ type: 'spring', stiffness: 480, damping: 20, delay: 0.12 }}
     >
       {children}
-    </motion.span>
+    </m.span>
   );
 }
 
@@ -160,7 +160,7 @@ export function TextoVertical({ texto, className = '' }: { texto: string; classN
   return (
     <span aria-hidden="true" className={`jp-vertical ${className}`}>
       {chars.map((c, i) => (
-        <motion.span
+        <m.span
           key={i}
           className="inline-block"
           initial={{ opacity: 0, y: -6, filter: 'blur(3px)' }}
@@ -169,7 +169,7 @@ export function TextoVertical({ texto, className = '' }: { texto: string; classN
           transition={{ duration: 0.4, delay: 0.25 + i * 0.09, ease: 'easeOut' }}
         >
           {c}
-        </motion.span>
+        </m.span>
       ))}
     </span>
   );
@@ -179,13 +179,13 @@ export function TextoVertical({ texto, className = '' }: { texto: string; classN
 export function Hanko({ children, className = '', delay = 0, enVista = true }: { children: ReactNode; className?: string; delay?: number; enVista?: boolean }) {
   const anim = { scale: 1, rotate: -4, opacity: 1 };
   return (
-    <motion.span
+    <m.span
       className={`inline-flex items-center justify-center ${className}`}
       initial={{ scale: 2.2, rotate: -18, opacity: 0 }}
       {...(enVista ? { whileInView: anim, viewport: { once: true, amount: 0.1 } } : { animate: anim })}
       transition={{ type: 'spring', stiffness: 520, damping: 22, delay }}
     >
       {children}
-    </motion.span>
+    </m.span>
   );
 }

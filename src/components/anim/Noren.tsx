@@ -20,7 +20,7 @@ export function Noren() {
   // Respaldo: si por algo no llega el evento de fin de animación, se retira igual.
   useEffect(() => {
     if (!visible) return;
-    const t = setTimeout(() => setAbiertaPara(seccion), 1600);
+    const t = setTimeout(() => setAbiertaPara(seccion), 1200);
     return () => clearTimeout(t);
   }, [visible, seccion]);
 

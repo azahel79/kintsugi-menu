@@ -1,6 +1,6 @@
 /**
- * Íconos Material Symbols que usa el proyecto. Google solo envía estos glifos
- * (la fuente completa pesa varios MB). Si agregas un ícono nuevo, agrégalo aquí.
+ * Íconos Material Symbols que usa el proyecto (la fuente completa pesa varios MB;
+ * aquí solo van estos glifos). Si agregas un ícono nuevo, agrégalo aquí.
  */
 export const ICONOS_INGREDIENTE = [
   'bakery_dining', 'eco', 'egg', 'egg_alt', 'grass', 'local_florist', 'nutrition',
@@ -15,8 +15,10 @@ const ICONOS_UI = [
   'visibility_off', 'category', 'key', 'open_in_new', 'arrow_upward', 'arrow_downward',
 ] as const;
 
-const todos = Array.from(new Set<string>([...ICONOS_INGREDIENTE, ...ICONOS_UI])).sort();
-
-export const MATERIAL_SYMBOLS_URL =
-  'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0..1' +
-  `&icon_names=${todos.join(',')}&display=block`;
+/*
+ * La fuente con estos íconos vive en src/fonts/material-symbols-subset.woff2.
+ * Si agregas un ícono a las listas de arriba, vuelve a descargarla con:
+ *   https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@400,0..1&icon_names=<lista ordenada>
+ * (descarga el .woff2 que aparece en ese CSS y reemplaza el archivo).
+ */
+export const TODOS_LOS_ICONOS = Array.from(new Set<string>([...ICONOS_INGREDIENTE, ...ICONOS_UI])).sort();
