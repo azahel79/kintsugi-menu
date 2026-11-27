@@ -4,6 +4,7 @@ import { GrietaDorada } from '@/components/anim/Kintsugi';
 import { LetrasCaen } from '@/components/anim/Letras';
 import { FarolViento, FondoParallax, LogoCompacto, ProgresoOro } from '@/components/anim/Scroll';
 import { enlaceSeguro, waLink, type Menu } from '@/lib/menu';
+import { lineasHorario } from '@/lib/texto';
 import { LogoFacebook, LogoInstagram, LogoTikTok, LogoWhatsApp } from './LogosRedes';
 
 /** Farolito chōchin que se mece en el encabezado. */
@@ -40,7 +41,7 @@ export function MenuHeader({ menu, activa }: { menu: Menu; activa: string }) {
         </LogoCompacto>
         <div className="flex items-start gap-1 -mb-3">
           <FarolViento><Chochin kanji="麺" /></FarolViento>
-          <FarolViento sentido={-1}><Chochin kanji="寿" /></FarolViento>
+          <FarolViento sentido={-1}><Chochin kanji="鮨" /></FarolViento>
         </div>
       </div>
       <nav aria-label="Secciones del menú" className="grid gap-gutter-xs" style={{ gridTemplateColumns: `repeat(${menu.secciones.length}, minmax(0, 1fr))` }}>
@@ -56,7 +57,7 @@ export function MenuHeader({ menu, activa }: { menu: Menu; activa: string }) {
               }`}
             >
               <span className={`font-jp text-body-sm leading-none ${on ? 'text-gold-light' : 'text-kintsugi-gold/80'}`} aria-hidden="true">{s.jp}</span>
-              <span className="font-label text-label-sm leading-tight mt-0.5">{s.nombre}</span>
+              <span className="font-label text-label-sm leading-tight mt-0.5 text-center text-balance">{s.nombre}</span>
             </Link>
           );
         })}
@@ -78,10 +79,14 @@ export function MenuFooter({ menu }: { menu: Menu }) {
         <div className="flex flex-col gap-gutter-xs min-w-0">
           <LetrasCaen texto={n.nombre} className="font-display text-headline-md text-primary uppercase [paint-order:stroke_fill] [-webkit-text-stroke:2px_#F2EEE6]" />
           {n.horario && (
-            <p className="font-body text-body-sm text-washi/80 flex items-center gap-1">
-              <span className="material-symbols-outlined text-body-md text-kintsugi-gold" aria-hidden="true">schedule</span>
-              {n.horario}
-            </p>
+            <div className="font-body text-body-sm text-washi/80 flex items-start gap-1">
+              <span className="material-symbols-outlined text-body-md text-kintsugi-gold mt-0.5" aria-hidden="true">schedule</span>
+              <span className="flex flex-col">
+                {lineasHorario(n.horario).map((l) => (
+                  <span key={l}>{l}</span>
+                ))}
+              </span>
+            </div>
           )}
           {n.direccion && (
             <p className="font-body text-body-sm text-washi/80 flex items-center gap-1">

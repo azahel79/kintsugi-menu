@@ -19,8 +19,8 @@ export default function LoginPage() {
           <h1 className="font-display text-[44px] leading-none tracking-wider uppercase text-primary [paint-order:stroke_fill] [-webkit-text-stroke:5px_#F2EEE6] [text-shadow:0_4px_0_#141414,0_10px_28px_rgba(0,0,0,.65)]">
             KINTSUGI
           </h1>
-          <span className="absolute -right-12 -top-1 w-10 h-10 rounded-sm bg-primary text-on-primary border border-kintsugi-gold flex items-center justify-center font-brush text-body-md rotate-[-4deg] shadow-[0_4px_12px_rgba(0,0,0,.5)]" aria-hidden="true">
-            金継
+          <span className="absolute -right-12 -top-1 w-10 h-10 rounded-sm bg-primary text-on-primary border border-kintsugi-gold grid grid-cols-2 place-items-center content-center gap-px font-brush text-[14px] leading-none rotate-[-4deg] shadow-[0_4px_12px_rgba(0,0,0,.5)]" aria-hidden="true">
+            {['日', '本', '料', '理'].map((c) => <span key={c}>{c}</span>)}
           </span>
         </div>
         <p lang="ja" className="-mt-1 font-brush text-[30px] leading-none tracking-[0.4em] pl-[0.4em] text-gold-light [text-shadow:0_2px_0_#141414,0_4px_14px_rgba(0,0,0,.7)]">

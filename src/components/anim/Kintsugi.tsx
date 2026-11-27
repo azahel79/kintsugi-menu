@@ -2,6 +2,7 @@
 
 import { m, useReducedMotion } from 'motion/react';
 import { Children, type ReactNode } from 'react';
+import { GIRAR_EN_VERTICAL } from '@/lib/texto';
 
 /* Grietas doradas: varias formas para que no todas las tarjetas se vean igual. */
 const GRIETAS = [
@@ -166,7 +167,7 @@ export function TextoVertical({ texto, className = '' }: { texto: string; classN
       {chars.map((c, i) => (
         <m.span
           key={i}
-          className="block"
+          className={GIRAR_EN_VERTICAL.test(c) ? 'block rotate-90' : 'block'}
           initial={{ opacity: 0, y: -6, filter: 'blur(3px)' }}
           whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
           viewport={{ once: true, amount: 0.5 }}

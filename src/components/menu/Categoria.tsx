@@ -136,9 +136,8 @@ function Vertical({ cat, filas }: { cat: Categoria; filas: number }) {
   );
 }
 
-/** Guía informativa de "Arma tu sushi" (el cliente solo la consulta). */
-function GuiaSushi({ sushi }: { sushi: Menu['sushi'] }) {
-  const mitad = Math.ceil(sushi.ingredientes.length / 2);
+/** "Arma tu sushi": título y los tres pasos (va arriba de los rollos). */
+function PasosSushi({ sushi }: { sushi: Menu['sushi'] }) {
   return (
     <div className="border-b border-ink-black/25 pb-gutter-md flex flex-col gap-gutter-md">
       <div className="flex items-center justify-center gap-gutter-sm">
@@ -157,6 +156,16 @@ function GuiaSushi({ sushi }: { sushi: Menu['sushi'] }) {
           </li>
         ))}
       </ol>
+    </div>
+  );
+}
+
+/** Ingredientes disponibles y precio de extras (va debajo de los rollos). */
+function IngredientesSushi({ sushi }: { sushi: Menu['sushi'] }) {
+  const mitad = Math.ceil(sushi.ingredientes.length / 2);
+  return (
+    <div className="border-t border-ink-black/25 pt-gutter-md flex flex-col gap-gutter-sm">
+      <h4 className="text-center font-headline text-title-md text-ink-black uppercase">Elige {sushi.incluidos} ingredientes</h4>
       <ul
         className="grid grid-cols-2 grid-flow-col gap-x-gutter-md gap-y-gutter-xs px-gutter-sm font-body text-body-sm text-ink-black uppercase"
         style={{ gridTemplateRows: `repeat(${mitad}, auto)` }}
@@ -204,11 +213,12 @@ export function CategoriaCard({ cat, menu, indice }: { cat: Categoria; menu: Men
       ) : (
         <h2 className="sr-only">{cat.nombre}</h2>
       )}
-      {/* La guía "Arma tu sushi" va primero y los rollos debajo */}
-      {cat.armable && <GuiaSushi sushi={menu.sushi} />}
+      {/* Sushi: 1) Arma tu sushi  2) los rollos  3) los ingredientes */}
+      {cat.armable && <PasosSushi sushi={menu.sushi} />}
       <div className="flex items-stretch gap-gutter-sm">
         {cat.lado === 'izq' ? <><Vertical cat={cat} filas={items.length} />{lista}</> : <>{lista}<Vertical cat={cat} filas={items.length} /></>}
       </div>
+      {cat.armable && <IngredientesSushi sushi={menu.sushi} />}
     </Makimono>
   );
 }

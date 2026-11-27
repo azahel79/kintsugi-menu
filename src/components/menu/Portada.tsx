@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { lineasHorario } from '@/lib/texto';
 
 type Props = {
   portada: string | null;
@@ -62,7 +63,9 @@ export function Portada({ portada, lema, titulo, texto, horario, zona, primeraSe
             KINTSUGI
           </h1>
           <span className="animate-hanko absolute -right-12 -top-1 w-11 h-11 rounded-sm bg-primary text-on-primary border border-kintsugi-gold shadow-[0_4px_12px_rgba(0,0,0,.5)] inline-flex items-center justify-center">
-            <span className="font-brush text-title-md leading-none">金継</span>
+            <span className="grid grid-cols-2 font-brush text-[15px] leading-none gap-px" aria-label="日本料理, cocina japonesa">
+              {['日', '本', '料', '理'].map((c) => <span key={c} aria-hidden="true">{c}</span>)}
+            </span>
           </span>
         </div>
         {/* Nombre original en japonés: 金継ぎ (kintsugi) */}
@@ -93,9 +96,12 @@ export function Portada({ portada, lema, titulo, texto, horario, zona, primeraSe
             <span className="material-symbols-outlined text-title-md" aria-hidden="true">restaurant_menu</span>
             <span className="font-label text-label-lg">Abrir menú digital</span>
           </Link>
-          <p className="font-body text-body-sm text-kintsugi-gold">
-            {horario} · {zona}
-          </p>
+          <div className="flex flex-col gap-0.5 font-body text-body-sm text-kintsugi-gold">
+            {lineasHorario(horario).map((l) => (
+              <p key={l}>{l}</p>
+            ))}
+            {zona && <p className="text-washi/70">{zona}</p>}
+          </div>
         </div>
       </div>
     </main>

@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 import { GrietaDorada, Hanko, TextoVertical } from '@/components/anim/Kintsugi';
 import { LetrasCaen } from '@/components/anim/Letras';
+import { GIRAR_EN_VERTICAL } from '@/lib/texto';
 import { HojaInferior } from '@/components/menu/HojaInferior';
 import { FondoSeccion } from '@/components/menu/Chrome';
 import { dinero, getMenu, promoDe } from '@/lib/menu';
@@ -57,12 +58,12 @@ async function Platillo({ params }: Pick<PageProps<'/platillo/[id]'>, 'params'>)
             <span className="font-display text-headline-lg text-primary uppercase">KINTSUGI</span>
           </div>
           <span className="bg-washi/80 rounded-sm px-1 py-2">
-            <TextoVertical texto="いらっしゃい" className="font-brush text-ink-black text-headline-md" />
+            <TextoVertical texto="いらっしゃいませ" className="font-brush text-ink-black text-body-md" />
           </span>
         </header>
       </div>
 
-      <HojaInferior className="relative z-20 mt-40 bg-washi/95 backdrop-blur-sm rounded-t-xl border-t-2 border-kintsugi-gold flex flex-col">
+      <HojaInferior className="relative z-20 mt-48 bg-washi/95 backdrop-blur-sm rounded-t-xl border-t-2 border-kintsugi-gold flex flex-col">
         <div className="flex items-center justify-between px-page-margin pt-gutter-md pb-gutter-sm">
           <span className="font-body text-body-sm text-smoke-gray tracking-widest uppercase font-semibold">
             {cat?.nombre}
@@ -98,7 +99,7 @@ async function Platillo({ params }: Pick<PageProps<'/platillo/[id]'>, 'params'>)
             <div className="flex items-start gap-gutter-md min-w-0">
               {p.jp && (
                 <span className="flex flex-col items-center px-1 py-1 rounded-sm bg-primary text-on-primary text-body-sm font-jp font-bold leading-[1.15] shrink-0" aria-hidden="true">
-                  {Array.from(p.jp).map((c, i) => <span key={i}>{c}</span>)}
+                  {Array.from(p.jp).map((c, i) => <span key={i} className={GIRAR_EN_VERTICAL.test(c) ? 'rotate-90' : ''}>{c}</span>)}
                 </span>
               )}
               <div className="flex flex-col gap-gutter-xs min-w-0">

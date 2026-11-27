@@ -20,19 +20,19 @@ const ramenDesc = (extra: string) =>
 const secciones = [
   { id: 'ramen-sushi', nombre: 'Ramen y Sushi', jp: '麺・寿司', fondo: '/img/fondo-ramen-sushi-bambu.jpg', orden: 0 },
   { id: 'entradas', nombre: 'Para compartir', jp: '取り分け', fondo: '/img/fondo-entradas-enso.jpg', orden: 1 },
-  { id: 'bebidas', nombre: 'Bebidas', jp: '飲・甘味', fondo: '/img/fondo-bebidas-dragon.jpg', orden: 2 },
+  { id: 'bebidas', nombre: 'Bebidas y postres', jp: '飲み物・甘味', fondo: '/img/fondo-bebidas-dragon.jpg', orden: 2 },
 ];
 
 const categorias = [
-  { id: 'ramen', seccionId: 'ramen-sushi', nombre: 'Ramen', mostrarTitulo: true, estilo: 'ramen', subMayus: true, vertical: '尺丹爪巨刀', lado: 'izq', kanji: '麺',
+  { id: 'ramen', seccionId: 'ramen-sushi', nombre: 'Ramen', mostrarTitulo: true, estilo: 'ramen', subMayus: true, vertical: 'ラーメン', lado: 'izq', kanji: '麺',
     nota: 'Todos los Ramen se preparan con fondo de la casa, espinacas, mitad de huevo duro y alga nori.' },
-  { id: 'sushi', seccionId: 'ramen-sushi', nombre: 'Sushi', mostrarTitulo: false, estilo: 'sushi', subMayus: true, vertical: '丂凵丂卄丨', lado: 'der', kanji: '寿', armable: true },
+  { id: 'sushi', seccionId: 'ramen-sushi', nombre: 'Sushi', mostrarTitulo: false, estilo: 'sushi', subMayus: true, vertical: '寿司', lado: 'der', kanji: '鮨', armable: true },
   { id: 'entradas', seccionId: 'entradas', nombre: 'Entradas', mostrarTitulo: true, estilo: 'lista', subMayus: false, vertical: '前菜', lado: 'der', kanji: '品' },
   { id: 'arroz-fideos', seccionId: 'entradas', nombre: 'Arroz y fideos', mostrarTitulo: true, estilo: 'lista', subMayus: false, vertical: 'ご飯と麺', lado: 'izq', kanji: '飯' },
   { id: 'brochetas', seccionId: 'entradas', nombre: 'Yakitori y Kushiyaki', mostrarTitulo: true, estilo: 'lista', subMayus: false, vertical: '焼き鳥', lado: 'der', kanji: '串' },
   { id: 'kushiage', seccionId: 'entradas', nombre: 'Kushiage', mostrarTitulo: true, estilo: 'lista', subMayus: false, vertical: '串揚げ', lado: 'izq', kanji: '揚' },
-  { id: 'bebidas', seccionId: 'bebidas', nombre: 'Bebidas', mostrarTitulo: true, estilo: 'lista', subMayus: true, vertical: '乃巨乃一口丹丂', lado: 'izq', kanji: '飲' },
-  { id: 'postres', seccionId: 'bebidas', nombre: 'Postres', mostrarTitulo: true, estilo: 'lista', subMayus: true, vertical: '尸口丂丁尺巨丂', lado: 'der', kanji: '甘' },
+  { id: 'bebidas', seccionId: 'bebidas', nombre: 'Bebidas', mostrarTitulo: true, estilo: 'lista', subMayus: true, vertical: '飲み物', lado: 'izq', kanji: '飲' },
+  { id: 'postres', seccionId: 'bebidas', nombre: 'Postres', mostrarTitulo: true, estilo: 'lista', subMayus: true, vertical: 'デザート', lado: 'der', kanji: '甘' },
 ].map((c, i) => ({ nota: '', armable: false, ...c, orden: i }));
 
 type P = Partial<typeof s.productos.$inferInsert> & { id: string; categoriaId: string; nombre: string; precio: number };
@@ -42,9 +42,9 @@ const productos: P[] = [
   { id: 'cerdo-marinado', categoriaId: 'ramen', nombre: 'Cerdo marinado', jp: '豚', precio: 75, descripcion: ramenDesc('cerdo marinado') },
   { id: 'tocino', categoriaId: 'ramen', nombre: 'Tocino', jp: 'ベーコン', precio: 75, descripcion: ramenDesc('tocino dorado') },
   { id: 'dayto', categoriaId: 'ramen', nombre: 'Dayto', jp: 'デイト', precio: 100, sub: '(Cerdo y camarón)', descripcion: ramenDesc('cerdo marinado y camarón') },
-  { id: 'camarones', categoriaId: 'ramen', nombre: 'Camarones', jp: 'メン', precio: 120, descripcion: ramenDesc('camarones') },
-  { id: 'arrachera', categoriaId: 'ramen', nombre: 'Arrachera', jp: '牛', precio: 120, descripcion: ramenDesc('arrachera') },
-  { id: 'kintsugi', categoriaId: 'ramen', nombre: 'Kintsugi', jp: '全部', precio: 200,
+  { id: 'camarones', categoriaId: 'ramen', nombre: 'Camarones', jp: '海老', precio: 120, descripcion: ramenDesc('camarones') },
+  { id: 'arrachera', categoriaId: 'ramen', nombre: 'Arrachera', jp: '牛ハラミ', precio: 120, descripcion: ramenDesc('arrachera') },
+  { id: 'kintsugi', categoriaId: 'ramen', nombre: 'Kintsugi', jp: '全部のせ', precio: 200,
     sub: 'Fondo de la casa, camarón, arrachera, tocino, cerdo marinado, pollo, dos mitades de huevo duro y naruto.',
     descripcion: 'Nuestro ramen insignia servido en tazón ceremonial: fondo de la casa cocinado a fuego lento, camarón, arrachera, tocino dorado, cerdo marinado, pollo, dos mitades de huevo duro, naruto, espinacas y alga nori.',
     etiquetas: ['Especialidad', 'Nuevo', 'Picante opcional'], opcionesTitulo: 'Estilo de caldo', opciones: ['Tradicional', 'Picante suave', 'Extra picante'] },
@@ -127,7 +127,7 @@ async function main() {
       lema: 'Cocina Japonesa · Banderilla, Ver.',
       bienvenidaTitulo: '¡Bienvenido a Kintsugi!',
       bienvenidaTexto: 'Ramen artesanal, sushi armado a tu gusto, entradas y bebidas tradicionales.',
-      horario: 'Mar a Dom · 1:00 PM – 10:00 PM',
+      horario: 'Lunes a Viernes 14:00 a 20:00 h · Sábados y Domingos 15:00 a 22:00 h',
       direccion: 'Centro, Banderilla, Veracruz',
       zona: 'Centro, Banderilla',
       whatsapp: '228 123 4567',
