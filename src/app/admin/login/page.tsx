@@ -23,6 +23,9 @@ export default function LoginPage() {
             金継
           </span>
         </div>
+        <p lang="ja" className="-mt-1 font-brush text-[30px] leading-none tracking-[0.4em] pl-[0.4em] text-gold-light [text-shadow:0_2px_0_#141414,0_4px_14px_rgba(0,0,0,.7)]">
+          金継ぎ
+        </p>
         <p className="flex items-center gap-gutter-sm font-label text-label-sm tracking-[0.14em] uppercase whitespace-nowrap [text-shadow:0_1px_6px_rgba(0,0,0,.8)]">
           <span aria-hidden="true" className="h-px w-6 bg-linear-to-r from-transparent to-kintsugi-gold" />
           Panel del dueño

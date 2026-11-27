@@ -65,6 +65,10 @@ export function Portada({ portada, lema, titulo, texto, horario, zona, primeraSe
             <span className="font-brush text-title-md leading-none">金継</span>
           </span>
         </div>
+        {/* Nombre original en japonés: 金継ぎ (kintsugi) */}
+        <p lang="ja" className="animate-aparecer -mt-1 font-brush text-[30px] leading-none tracking-[0.4em] pl-[0.4em] text-gold-light [text-shadow:0_2px_0_#141414,0_4px_14px_rgba(0,0,0,.7)]">
+          金継ぎ
+        </p>
         <p className="animate-aparecer flex items-center gap-gutter-sm font-label text-label-sm text-washi tracking-[0.14em] uppercase whitespace-nowrap [text-shadow:0_1px_6px_rgba(0,0,0,.8)]">
           <span aria-hidden="true" className="h-px w-6 shrink-0 bg-linear-to-r from-transparent to-kintsugi-gold" />
           {lema}
