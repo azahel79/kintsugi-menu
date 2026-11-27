@@ -23,7 +23,7 @@ function Precio({ p, grande = false }: { p: MenuProducto; grande?: boolean }) {
 }
 
 function JpChico({ jp }: { jp: string }) {
-  return jp ? <TintaSeca className="font-jp text-body-sm text-smoke-gray shrink-0">{jp}</TintaSeca> : null;
+  return jp ? <TintaSeca className="font-jp text-[13px] font-bold text-ink-black/85 shrink-0 whitespace-nowrap">{jp}</TintaSeca> : null;
 }
 
 function Foto({ p, clase }: { p: MenuProducto; clase: string }) {
@@ -87,7 +87,7 @@ function Fila({ p, cat, ultima }: { p: MenuProducto; cat: Categoria; ultima: boo
       <Link href={href} prefetch={false} className={`${base} items-center`}>
         <div className="flex flex-col min-w-0">
           <h3 className="font-headline text-title-md text-ink-black uppercase">
-            {p.nombre} {p.jp && <TintaSeca className="font-jp text-body-sm text-smoke-gray font-normal">{p.jp}</TintaSeca>}
+            {p.nombre} {p.jp && <TintaSeca className="inline-block font-jp text-[13px] font-bold text-ink-black/85 whitespace-nowrap">{p.jp}</TintaSeca>}
           </h3>
           {sub}
         </div>

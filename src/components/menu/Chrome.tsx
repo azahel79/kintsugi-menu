@@ -56,7 +56,7 @@ export function MenuHeader({ menu, activa }: { menu: Menu; activa: string }) {
                 on ? 'bg-primary text-on-primary border border-kintsugi-gold shadow-[0_0_14px_-2px_rgba(200,55,45,.7)]' : 'bg-washi/5 text-washi/90 border border-kintsugi-gold/30 hover:border-kintsugi-gold/70 hover:bg-washi/10'
               }`}
             >
-              <span className={`font-jp text-body-sm leading-none ${on ? 'text-gold-light' : 'text-kintsugi-gold/80'}`} aria-hidden="true">{s.jp}</span>
+              <span className={`font-jp text-body-sm font-bold leading-none ${on ? 'text-gold-light' : 'text-kintsugi-gold'}`} aria-hidden="true">{s.jp}</span>
               <span className="font-label text-label-sm leading-tight mt-0.5 text-center text-balance">{s.nombre}</span>
             </Link>
           );
